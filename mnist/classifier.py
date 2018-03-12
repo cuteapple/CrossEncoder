@@ -5,6 +5,10 @@ model_path = 'mnist_classifier.h5'
 epochs = 50
 batch_size = 128
 
+import os
+model_path = os.path.join(os.path.dirname(__file__), model_path)
+del os
+
 def new_model():
 	from keras.models import Sequential
 	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
