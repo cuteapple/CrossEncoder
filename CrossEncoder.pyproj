@@ -24,7 +24,10 @@
     <Compile Include="dcgan.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="mnist.py" />
+    <Compile Include="mnist\mnist.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="mnist\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
