@@ -37,12 +37,9 @@ if options.train or options.test:
 #
 
 x = Input(shape=(28,28,1))
-z = Conv2D(16, (3, 3), activation='relu', padding='same')(x)
-z = MaxPooling2D((2, 2), padding='same')(z)
-z = Conv2D(8, (3, 3), activation='relu', padding='same')(z)
-z = MaxPooling2D((2, 2), padding='same')(z)
-z = Conv2D(8, (3, 3), activation='relu', padding='same')(z)
-z = MaxPooling2D((2, 2), padding='same')(z)
+z = Conv2D(filters=16, kernel_size=3, strides=2, activation='relu', padding='same')(x)
+z = Conv2D(filters=8, kernel_size=3, strides=2, activation='relu', padding='same')(z)
+z = Conv2D(filters=8, kernel_size=3, strides=2, activation='relu', padding='same')(z)
 Encode = Model(x,z,name='Encoder')
 
 z = Input(shape = Encode.output_shape[1:])
