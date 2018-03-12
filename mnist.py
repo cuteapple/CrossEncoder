@@ -2,7 +2,7 @@ import keras
 
 input_shape=(28,28,1)
 model_path = 'mnist_classifier.h5'
-epochs = 10
+epochs = 50
 batch_size = 128
 
 def new_model():
@@ -15,8 +15,8 @@ def new_model():
 	model.add(Flatten())
 	model.add(Dense(128, activation='relu'))
 	model.add(Dropout(0.5))
-	model.add(Dense(10, activation='softmax'))
-
+	model.add(Dense(10))
+	model.compile(optimizer='adadelta', loss='mse' ,metrics=['accuracy'])
 	return model
 
 loaded_mnist = False
@@ -50,7 +50,6 @@ def load_model(new_on_fail=True):
 
 def train_model(model):
 	(x_train,y_train),(x_test,y_test) = load_mnist()
-	model.compile(optimizer='adadelta', loss='binary_crossentropy' ,metrics=['accuracy'])
 	model.fit(x_train, y_train,
 			  batch_size=batch_size,
 			  epochs=epochs,
@@ -72,7 +71,7 @@ def main():
 	model = load_model(new_on_fail=True)
 	train_model(model)
 	save_model(model)
-	test_model(model)
+	#test_model(model)
 
 if __name__ == '__main__':
 	main()
