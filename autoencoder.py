@@ -67,7 +67,6 @@ if options.plot_model:
 	plot_model(decoder, to_file='model_decoder.png',show_shapes=True)
 
 
-
 #
 # Start
 #
