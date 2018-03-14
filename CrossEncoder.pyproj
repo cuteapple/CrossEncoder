@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{dd31bb4f-3b4c-45b1-ace7-5b77954ff615}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>mnist/autoencoder.py</StartupFile>
+    <StartupFile>mnist/dcgan.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -28,6 +28,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="mnist\classifier.py" />
+    <Compile Include="mnist\dcgan.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="mnist\" />
