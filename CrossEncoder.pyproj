@@ -5,7 +5,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{dd31bb4f-3b4c-45b1-ace7-5b77954ff615}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>mnist/dcgan.py</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -20,20 +21,15 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="autoencoder.py" />
-    <Compile Include="dcgan.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="mnist\autoencoder.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="mnist\classifier.py" />
-    <Compile Include="mnist\dcgan.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Folder Include="DCGAN\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="mnist\" />
+    <Content Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DCGAN\classifier.py" />
+    <Compile Include="DCGAN\dcgan.py" />
+    <Compile Include="DCGAN\test_G.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
