@@ -33,6 +33,7 @@ def new_generator():
 
 def new_model():
 	'''return GAN,G,D'''
+	''' not new D '''
 	D = classifier.load_model(new_on_fail=False)
 	D.trainable=False
 	G = new_generator()
@@ -44,17 +45,19 @@ def new_model():
 	return model,G,D
 
 def load_model(new_on_fail=True):
-	models = new_model()
+	m,G,D = new_model()
 	try:
 		print('loading {}'.format(model_path))
-		models[0].load_weights(model_path)
+		G.load_weights(model_path)
 	except (OSError,ValueError) as e:
 		if not new_on_fail:
-			raise
+			print(str(e))
+			print('load weights failed, terminate')
+			raise SystemExit()
 		else:
 			print(str(e))
 			print('load weights failed, recreate')
-	return models
+	return m,G,D
 
 
 def z_generator():
@@ -68,8 +71,7 @@ def z_generator():
 		yield g()
 
 def train_model(model):
-	pass
-	#model.fit_generator(z_generator(),steps_per_epoch=100,epochs=epochs)
+	model.fit_generator(z_generator(),steps_per_epoch=100,epochs=epochs)
 
 def save_model(model):
 	print('saving {}'.format(model_path))
