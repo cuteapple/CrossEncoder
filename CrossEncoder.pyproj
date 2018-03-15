@@ -21,12 +21,20 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="CycleGAN\" />
     <Folder Include="DCGAN\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CycleGAN\README.md" />
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CycleGAN\classifier.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CycleGAN\encoder.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DCGAN\classifier.py" />
     <Compile Include="DCGAN\dcgan.py" />
     <Compile Include="DCGAN\test_G.py" />
