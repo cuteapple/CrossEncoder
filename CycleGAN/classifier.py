@@ -1,10 +1,11 @@
 import keras
 
-input_shape=(256,256)
+input_shape=(256,256,3)
 model_path = 'xphoto_classifier.h5'
-data_folder = 'x2photo/train'
+train_data_folder = 'x2photo/train'
+test_data_folder = 'x2photo/test'
 epochs = 50
-step = 2000
+steps_per_epoch = 2000
 batch_size = 32
 number_of_class = 5
 
@@ -35,12 +36,16 @@ def new_model(compile = True):
 		model.compile(optimizer='RMSProp', loss='mse' ,metrics=['accuracy'])
 	return model
 
-def dataGenerator():
-	imG = keras.preprocessing.image.ImageDataGenerator()
-	imG.flow_from_directory(data_folder, class_mode='categorical',batch_size = batch_size)
-	return imG
+def dataGenerator(path):
+	from keras.preprocessing import image
+	imG = image.ImageDataGenerator(data_format = 'channels_last')
+	return imG.flow_from_directory(path, class_mode='categorical',target_size = input_shape[:2], batch_size = batch_size)
 
-def load_model(for_test = False):
+def save_model(model):
+	print('saving {}'.format(model_path))
+	model.save_weights(model_path)
+
+def load_model(for_test = True):
 	model = new_model(compile = not for_test)
 	try:
 		print('loading {}'.format(model_path))
@@ -53,29 +58,19 @@ def load_model(for_test = False):
 	return model
 
 def train_model(model):
-	imG = dataGenerator()
-	model.fit(x_train, y_train,
-			  batch_size=batch_size,
-			  epochs=epochs,
-			  verbose=1,
-			  validation_data=(x_test, y_test))
-
-def save_model(model):
-	print('saving {}'.format(model_path))
-	model.save_weights(model_path)
-
-def test_model(model):
-	_,(x_test,y_test) = load_mnist()
-	score = model.evaluate(x_test, y_test, verbose=0)
-	print('Test loss:', score[0])
-	print('Test accuracy:', score[1])
-
+	model.fit_generator(
+		generator = dataGenerator(train_data_folder),
+		validation_data = dataGenerator(test_data_folder),
+		epochs = epochs,
+		steps_per_epoch = steps_per_epoch,
+		validation_steps = steps_per_epoch/10,
+		verbose=1,
+	)
 
 def main():
-	model = load_model(new_on_fail=True)
+	model = load_model(for_test = False)
 	train_model(model)
 	save_model(model)
-	#test_model(model)
 
 if __name__ == '__main__':
 	main()
