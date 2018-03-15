@@ -4,8 +4,9 @@ input_shape=(256,256)
 model_path = 'xphoto_classifier.h5'
 data_folder = 'x2photo/train'
 epochs = 50
+step = 2000
 batch_size = 32
-number_of_class = 4
+number_of_class = 5
 
 import os
 model_path = os.path.join(os.path.dirname(__file__), model_path)
@@ -34,25 +35,25 @@ def new_model(compile = True):
 		model.compile(optimizer='RMSProp', loss='mse' ,metrics=['accuracy'])
 	return model
 
-def train_data():
+def dataGenerator():
 	imG = keras.preprocessing.image.ImageDataGenerator()
 	imG.flow_from_directory(data_folder, class_mode='categorical',batch_size = batch_size)
+	return imG
 
-def load_model(new_on_fail=True):
-	model = new_model()
+def load_model(for_test = False):
+	model = new_model(compile = not for_test)
 	try:
 		print('loading {}'.format(model_path))
 		model.load_weights(model_path)
 	except (OSError,ValueError) as e:
-		if not new_on_fail:
+		if for_test:
 			raise
 		else:
-			print(str(e))
 			print('load weights failed, recreate')
 	return model
 
 def train_model(model):
-	(x_train,y_train),(x_test,y_test) = load_mnist()
+	imG = dataGenerator()
 	model.fit(x_train, y_train,
 			  batch_size=batch_size,
 			  epochs=epochs,
