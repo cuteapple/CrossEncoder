@@ -5,7 +5,7 @@ model_path = 'xphoto_classifier.h5'
 train_data_folder = 'x2photo/train'
 test_data_folder = 'x2photo/test'
 epochs = 50
-steps_per_epoch = 2000
+steps_per_epoch = 200
 batch_size = 32
 number_of_class = 5
 

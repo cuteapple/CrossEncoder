@@ -104,3 +104,4 @@ ENV/
 # dataset
 
 CycleGAN/x2photo/
+*.zip
