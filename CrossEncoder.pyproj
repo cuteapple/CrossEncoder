@@ -28,6 +28,7 @@
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CycleGAN\build_data.py" />
     <Compile Include="CycleGAN\classifier.py">
       <SubType>Code</SubType>
     </Compile>

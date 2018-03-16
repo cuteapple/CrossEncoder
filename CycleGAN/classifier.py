@@ -38,8 +38,11 @@ def new_model(compile = True):
 
 def dataGenerator(path):
 	from keras.preprocessing import image
-	imG = image.ImageDataGenerator(data_format = 'channels_last')
+	imG = image.ImageDataGenerator(data_format = 'channels_last')#preprocessing_function not avalible
 	imG = imG.flow_from_directory(path, class_mode='categorical',target_size = input_shape[:2], batch_size = batch_size)
+	#while True:
+	#	imgs , labels = next(imG)
+	#	return imgs/255,labels
 
 def save_model(model):
 	print('saving {}'.format(model_path))

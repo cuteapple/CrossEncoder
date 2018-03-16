@@ -1,17 +1,14 @@
 import cv2
 import numpy as np
-from collections import namedtuple
 import glob
-import os
 
 test_folder = 'x2photo/test'
 train_folder = 'x2photo/train'
 label_name = ['cezanne','monet','photo','ukiyoi','vangogh']
-output_folder = 'preprocess-data'
 
-label_count = len(labels_name)
-I = np.eye(len(labels))
-label_one_hot = { I[index]:name for index,name in enumerate(labels) }
+label_count = len(label_name)
+I = np.eye(label_count)
+label_one_hot = { name:I[index] for index,name in enumerate(label_name) }
 
 def images(fileName_iterator):
 	for file in fileName_iterator:
@@ -28,9 +25,10 @@ def normalize(im):
 def load_collection(root):
 	D={}
 	for name in label_name:
+		print('reading {}'.format(name))
 		files = glob.glob('{}/{}/*'.format(root,name))
 		imgs = images(files)
-		images = (normalize(im) for im in imgs)
+		D[name] = list(normalize(im) for im in imgs)
 	return D
 
 train = load_collection(train_folder)
