@@ -92,7 +92,7 @@ def dataGenerator(path):
 	imG = imG.flow_from_directory(path, class_mode='categorical',target_size = input_shape[:2], batch_size = batch_size)
 	while True:
 		images, labels = next(imG) # ([batch_size,img],[batch_size,label one hot])
-		random_labels = np.eye(number_of_class)[np.random.choice(number_of_class,batch_size)]
+		random_labels = np.eye(number_of_class)[np.random.choice(number_of_class,images.shape[0])]
 		yield [images, random_labels], [random_labels]
 
 def save_model(G):
