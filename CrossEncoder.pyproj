@@ -31,6 +31,9 @@
     <Compile Include="CycleGAN\classifier.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CycleGAN\dataLoader.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CycleGAN\encoder.py">
       <SubType>Code</SubType>
     </Compile>
