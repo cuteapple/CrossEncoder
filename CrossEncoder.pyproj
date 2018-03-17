@@ -35,6 +35,9 @@
     <Compile Include="CycleGAN\encoder.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CycleGAN\test.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DCGAN\classifier.py" />
     <Compile Include="DCGAN\dcgan.py" />
     <Compile Include="DCGAN\test_G.py" />

@@ -6,8 +6,8 @@ input_shape=(256,256,3)
 model_path = 'xphoto_G.h5'
 train_data_folder = 'x2photo/train'
 test_data_folder = 'x2photo/test'
-epochs = 50
-steps_per_epoch = 200
+epochs = 10
+steps_per_epoch = 20
 batch_size = 32
 
 import os
