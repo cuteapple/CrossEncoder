@@ -38,7 +38,7 @@ def new_model(compile = True):
 		]
 	model = Sequential(layers=layers, name='xphoto_classifier')
 	if compile:
-		model.compile(optimizer='RMSProp', loss='categorical_crossentropy' ,metrics=['accuracy'])
+		model.compile(optimizer='adadelta', loss='categorical_crossentropy' ,metrics=['accuracy'])
 	return model
 
 def dataGenerator(path):
