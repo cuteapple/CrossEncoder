@@ -14,64 +14,36 @@ import os
 model_path = os.path.join(os.path.dirname(__file__), model_path)
 del os
 
-def encode_label(label,output_shape):
-	from keras.models import Sequential
-	from keras.layers import Flatten,Dense,LeakyReLU,Reshape
-	import numpy
-	
-	layers=[
-		Dense(number_of_class*10),
-		LeakyReLU(),
-		Dense(numpy.prod(output_shape)),
-		LeakyReLU(),
-		Reshape(output_shape)
-		]
-	y = label
-	for l in layers:
-		y = l(y)
-	return y
-
 
 def new_G():
 	from keras.models import Sequential,Model
 	from keras.layers import Conv2D,Flatten,Dense,Dropout, LeakyReLU,UpSampling2D,Reshape,Lambda,Input,Concatenate
 
-	input_label = Input((number_of_class,))
-	input_image = Input((256,256,3))
-
-	label_1 = encode_label(input_label,(256,256,4))
-	input_x = Concatenate(3)([label_1,input_image])
-
 	layers = [
-		Lambda(lambda x:x/255,input_shape=(256,256,7)),
-		Conv2D(32,3,strides=1,padding='same'),
-		LeakyReLU(),
-		Conv2D(32,3,strides=2,padding='same'), #1/2 128
-		LeakyReLU(),
+		Lambda(lambda x:x/255.0,input_shape=input_shape), #temp normalize until keras fix 
+		Conv2D(16,3,strides=2,padding='same'),
+		LeakyReLU(0.2),
 		Dropout(0.25),
-		Conv2D(64,3,strides=1,padding='same'),
-		LeakyReLU(),
-		Conv2D(64,3,strides=2,padding='same'), #1/4 64
-		LeakyReLU(),
-		Conv2D(128,3,strides=1,padding='same'),
-		LeakyReLU(),
-		Conv2D(128,3,strides=2,padding='same'), #1/8 32
-		LeakyReLU(),
-		
-		Conv2D(128,3,strides=1,padding='same'),
-		
+		Conv2D(32,3,strides=2,padding='same'),
+		LeakyReLU(0.2),
+		Dropout(0.5),
+		Conv2D(64,3,strides=2,padding='same'),
+		LeakyReLU(0.2),
+		Dropout(0.8),
+
 		UpSampling2D(),
 		Conv2D(64,3,strides=1,padding='same'),
 		LeakyReLU(),
 		UpSampling2D(),
 		Conv2D(32,3,strides=1,padding='same'),
+		LeakyReLU(),
 		UpSampling2D(),
-		Conv2D(16,3,strides=1,padding='same',activation = 'sigmoid'),
-		Conv2D(3,3,strides=1,padding='same',activation = 'sigmoid'),
-		Lambda(lambda x:x*255),
+		Conv2D(16,3,strides=1,padding='same'),
+		LeakyReLU(),
+		Conv2D(3,3,strides=1,padding='same'),
+		Lambda(lambda x:x*255.0),
 		]
 	model = Sequential(layers=layers)
-	model = Model([input_image,input_label],[model(input_x)], name='xphoto_G')
 	return model
 
 def new_model(compile = True):
@@ -79,8 +51,8 @@ def new_model(compile = True):
 	D = classifier.load_model(for_test=True)
 	D.trainable=False
 	i = keras.layers.Input(input_shape)
-	iL = keras.layers.Input((number_of_class,))
-	GAN= keras.models.Model([i,iL],D(G([i,iL])))
+	GAN = keras.models.Model(i,D(G(i)))
+
 	if compile:
 		GAN.compile(optimizer='RMSProp', loss='mse' ,metrics=['accuracy'])
 	return GAN,G,D
@@ -92,8 +64,9 @@ def dataGenerator(path):
 	imG = imG.flow_from_directory(path, class_mode='categorical',target_size = input_shape[:2], batch_size = batch_size)
 	while True:
 		images, labels = next(imG) # ([batch_size,img],[batch_size,label one hot])
-		random_labels = np.eye(number_of_class)[np.random.choice(number_of_class,images.shape[0])]
-		yield [images, random_labels], [random_labels]
+		#random_labels = np.eye(number_of_class)[np.random.choice(number_of_class,images.shape[0])]
+		random_labels = np.array([[0,0,1,0,0]]*images.shape[0])
+		yield images, random_labels
 
 def save_model(G):
 	print('saving {}'.format(model_path))
