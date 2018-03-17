@@ -29,6 +29,7 @@
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CrossEncoder\classifier.py" />
     <Compile Include="CrossEncoder\model.py">
       <SubType>Code</SubType>
     </Compile>
