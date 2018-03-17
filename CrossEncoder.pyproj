@@ -22,12 +22,16 @@
   <ItemGroup>
     <Folder Include="CycleGAN\" />
     <Folder Include="DCGAN\" />
+    <Folder Include="CrossEncoder\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="CycleGAN\README.md" />
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CrossEncoder\model.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="CycleGAN\build_data.py" />
     <Compile Include="CycleGAN\classifier.py">
       <SubType>Code</SubType>
