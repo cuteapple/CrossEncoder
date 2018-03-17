@@ -15,34 +15,36 @@ del os
 
 def new_model(compile = True):
 	from keras.models import Sequential
-	from keras.layers import Conv2D,Flatten,Dense,Dropout
+	from keras.layers import Conv2D,Flatten,Dense,Dropout,Lambda,MaxPooling2D,Activation
 	layers = [
 		Conv2D(32,3,strides=1,activation='relu',padding='same',input_shape=input_shape),
-		Conv2D(32,3,strides=2,activation='relu',padding='same'),
+		Conv2D(32,3,strides=1,activation='relu',padding='same'),
+		MaxPooling2D(pool_size=(2, 2)),
 		Dropout(0.25),
 		Conv2D(64,3,strides=1,activation='relu',padding='same'),
-		Conv2D(64,3,strides=2,activation='relu',padding='same'),
+		Conv2D(64,3,strides=1,activation='relu',padding='same'),
+		MaxPooling2D(pool_size=(2, 2)),
 		Dropout(0.25),
 		Conv2D(128,3,strides=1,activation='relu',padding='same'),
-		Conv2D(128,3,strides=2,activation='relu',padding='same'),
+		MaxPooling2D(pool_size=(2, 2)),
+		Conv2D(128,3,strides=1,activation='relu',padding='same'),
 		Dropout(0.25),
 		Flatten(),
-		Dense(number_of_class*30),
-		Dense(number_of_class*10),
-		Dense(number_of_class)
+		Dense(512,activation='relu'),
+		Dropout(0.5),
+		Dense(100),
+		Dense(number_of_class),
+		Activation('softmax')
 		]
 	model = Sequential(layers=layers, name='xphoto_classifier')
 	if compile:
-		model.compile(optimizer='RMSProp', loss='mse' ,metrics=['accuracy'])
+		model.compile(optimizer='RMSProp', loss='categorical_crossentropy' ,metrics=['accuracy'])
 	return model
 
 def dataGenerator(path):
 	from keras.preprocessing import image
 	imG = image.ImageDataGenerator(data_format = 'channels_last')#preprocessing_function not avalible
 	return imG.flow_from_directory(path, class_mode='categorical',target_size = input_shape[:2], batch_size = batch_size)
-	#while True:
-	#	imgs , labels = next(imG)
-	#	return imgs/255,labels
 
 def save_model(model):
 	print('saving {}'.format(model_path))
