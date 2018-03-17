@@ -5,10 +5,9 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{dd31bb4f-3b4c-45b1-ace7-5b77954ff615}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>CycleGAN/encoder.py</StartupFile>
     <SearchPath />
-    <WorkingDirectory>.</WorkingDirectory>
+    <WorkingDirectory>CycleGAN</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
@@ -21,12 +20,24 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="CycleGAN\" />
     <Folder Include="DCGAN\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CycleGAN\README.md" />
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CycleGAN\build_data.py" />
+    <Compile Include="CycleGAN\classifier.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CycleGAN\encoder.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CycleGAN\test.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DCGAN\classifier.py" />
     <Compile Include="DCGAN\dcgan.py" />
     <Compile Include="DCGAN\test_G.py" />
