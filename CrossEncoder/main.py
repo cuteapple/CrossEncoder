@@ -15,7 +15,7 @@ import numpy as np
 x=x.astype('float')/255
 x=x.reshape((-1,*input_shape))
 
-x_n = *(x[y==i] for i in range(10)),
+x_n = [x[y==i] for i in range(10)]
 
 X = x_n
 
@@ -37,44 +37,39 @@ cross15 = d5(e1(i1))
 D15 = classifier(cross15)
 D51 = classifier(cross51)
 
-model_1 = Model([i1],[auto1,D15])
-model_1.compile(optimizer='RMSProp',loss=['mse','categorical_crossentropy'],loss_weights=[1,2],metrics=['accuracy'])
+M11 = Model(i1,auto1)
+M15 = Model(i1,cross15)
+M55 = Model(i5,auto5)
+M51 = Model(i5,cross51)
 
-model_5 = Model([i5],[auto5,D51])
-model_5.compile(optimizer='RMSProp',loss=['mse','categorical_crossentropy'],loss_weights=[1,2],metrics=['accuracy'])
-
-model_all = Model([i1,i5],[auto1,auto5,D51,D15])
-model_all.compile(optimizer='RMSProp',
-				loss=['mse','mse','categorical_crossentropy','categorical_crossentropy']
-				,loss_weights=[1,1,1,1],metrics=['accuracy'])
-
-try: # cannot plot model on google colab
-	from keras.utils import plot_model
-	plot_model(model_all, to_file='model_all.png',show_shapes=True)
-except:
-	pass
+M11.compile(optimizer='RMSProp',loss='mse',metrics=['accuracy'])
+M55.compile(optimizer='RMSProp',loss='mse',metrics=['accuracy'])
+M15.compile(optimizer='RMSProp',loss='categorical_crossentropy',metrics=['accuracy'])
+M51.compile(optimizer='RMSProp',loss='categorical_crossentropy',metrics=['accuracy'])
 
 
 yab = lambda a,b : np.tile(np.eye(10)[b],len(X[a])).reshape(-1,10)
-y15 = yab(1,5)
-y51 = yab(5,1)
+
+#from keras.preprocessing.image import ImageDataGenerator
+
+#imG = ImageDataGenerator(width_shift_range=20,height_shift_range=20,fill_mode='constant',cval=0)
+
+x1 = X[3]
+x5 = X[5]
+y15 = yab(3,5)
+y51 = yab(5,3)
+
+#G11 = img.flow(x1,x1,batch_size=256)
+#G55 = img.flow(x5,x5,batch_size=256)
+#G15 = img.flow(x1,y15,batch_size=256)
+#G51 = img.flow(x1,y15,batch_size=256)
 
 for i in range(100):
 	print('epoch {} '.format(i))
-	model_1.fit(
-		x = [X[1]],
-		y = [X[1],y15],
-		batch_size = 128,
-		epochs=2,
-		verbose = 1
-		)
-	model_5.fit(
-		x = [X[5]],
-		y = [X[5],y51],
-		batch_size = 128,
-		epochs = 2,
-		verbose = 1
-	)
+	M11.fit(x1,x1,batch_size=128,epochs=10,verbose=0)
+	M55.fit(x5,x5,batch_size=128,epochs=10,verbose=0)
+	M15.fit(x1,y15,batch_size=128,epochs=30,verbose=0)
+	M51.fit(x5,y51,batch_size=128,epochs=30,verbose=0)
 
 Model(i1,auto1).save('M11.h5')
 Model(i1,cross15).save('M15.h5')
