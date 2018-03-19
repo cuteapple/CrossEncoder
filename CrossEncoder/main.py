@@ -76,5 +76,7 @@ for i in range(100):
 		verbose = 1
 	)
 
-model_1.save('model_1.h5')
-model_5.save('model_5.h5')
+Model(i1,auto1).save('M11.h5')
+Model(i1,cross15).save('M15.h5')
+Model(i5,auto5).save('M55.h5')
+Model(i5,cross51).save('M51.h5')

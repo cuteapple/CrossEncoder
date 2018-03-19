@@ -36,6 +36,7 @@
     <Compile Include="CrossEncoder\model.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CrossEncoder\test.py" />
     <Compile Include="CycleGAN\build_data.py" />
     <Compile Include="CycleGAN\classifier.py">
       <SubType>Code</SubType>
