@@ -1,6 +1,6 @@
 file_path='C.h5'
 
-def load_readonly():
+def load():
 	import keras
 	m = keras.models.load_model(file_path,None,False)
 	m.trainable = False
