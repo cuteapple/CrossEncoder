@@ -38,9 +38,9 @@ D15 = classifier(cross15)
 D51 = classifier(cross51)
 
 M11 = Model(i1,auto1)
-M15 = Model(i1,cross15)
+M15 = Model(i1,D15)
 M55 = Model(i5,auto5)
-M51 = Model(i5,cross51)
+M51 = Model(i5,D51)
 
 M11.compile(optimizer='RMSProp',loss='mse',metrics=['accuracy'])
 M55.compile(optimizer='RMSProp',loss='mse',metrics=['accuracy'])
@@ -66,10 +66,10 @@ y51 = yab(5,3)
 
 for i in range(100):
 	print('epoch {} '.format(i))
-	M11.fit(x1,x1,batch_size=128,epochs=10,verbose=0)
-	M55.fit(x5,x5,batch_size=128,epochs=10,verbose=0)
-	M15.fit(x1,y15,batch_size=128,epochs=30,verbose=0)
-	M51.fit(x5,y51,batch_size=128,epochs=30,verbose=0)
+	M11.fit(x1,x1,batch_size=128,epochs=10,verbose=1)
+	M55.fit(x5,x5,batch_size=128,epochs=10,verbose=1)
+	M15.fit(x1,y15,batch_size=128,epochs=30,verbose=1)
+	M51.fit(x5,y51,batch_size=128,epochs=30,verbose=1)
 
 Model(i1,auto1).save('M11.h5')
 Model(i1,cross15).save('M15.h5')

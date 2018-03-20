@@ -21,9 +21,9 @@ pretty = lambda im: im.reshape((28,28))*255
 
 import os
 os.makedirs('test/1')
-p11 = M11.predict(X[1])
-p15 = M15.predict(X[1])
-for i,(x1,y1,y5) in enumerate(zip(X[1],p11,p15)):
+p11 = M11.predict(X[3])
+p15 = M15.predict(X[3])
+for i,(x1,y1,y5) in enumerate(zip(X[3],p11,p15)):
 	cv2.imwrite('test/1/{}-1{}.png'.format(i,'o'),pretty(x1))
 	cv2.imwrite('test/1/{}-2{}.png'.format(i,'r'),pretty(y1))
 	cv2.imwrite('test/1/{}-3{}.png'.format(i,'t'),pretty(y5))
