@@ -107,3 +107,4 @@ CycleGAN/x2photo/
 *.zip
 *.h5
 test/
+*.rar

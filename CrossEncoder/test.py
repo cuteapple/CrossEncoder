@@ -6,7 +6,7 @@ from keras.models import load_model
 (x, y), _ = mnist.load_data()
 x=x.astype('float')/255
 x=x.reshape((-1,28,28,1))
-x_n = *(x[y==i][:100] for i in range(10)),
+x_n = *(x[y==i] for i in range(10)),
 X = x_n
 
 import numpy as np
