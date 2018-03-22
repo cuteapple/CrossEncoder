@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>52a2531a-b0a5-418a-90f1-d830acdb82d9</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>cyclegan.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
