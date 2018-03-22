@@ -71,6 +71,8 @@ except:
 	print('load weight fail')
 	pass
 
+print('version +1')
+
 for i in range(100):
 	verbose = 1
 	auto_epoch = 3
@@ -88,5 +90,5 @@ M55.save_weights('auto5_Weight.h5')
 
 Model(i1,auto1).save('M11.h5')
 Model(i1,cross15).save('M15.h5')
-Model(i5,auto5).save('M55.h5')`
+Model(i5,auto5).save('M55.h5')
 Model(i5,cross51).save('M51.h5')
