@@ -3,14 +3,22 @@ import keras
 from keras.datasets import mnist
 from keras.models import load_model
 
+import numpy as np
+import cv2
+
+small = True
+sc = 100
+
 (x, y), _ = mnist.load_data()
 x=x.astype('float')/255
 x=x.reshape((-1,28,28,1))
-x_n = *(x[y==i] for i in range(10)),
+if not small:
+	x_n = *(x[y==i] for i in range(10)),
+else:
+	x_n = *(x[y==i][:sc] for i in range(10)),
 X = x_n
 
-import numpy as np
-import cv2
+
 
 M11 = load_model('M11.h5',compile=False)
 M15 = load_model('M15.h5',compile=False)
