@@ -5,7 +5,7 @@ import numpy
 #from keras_contrib.layers.normalization import InstanceNormalization
 
 input_shape = (28,28,1)
-z_shape = (256,)
+z_shape = (10,)
 
 def Encoder():
 	return Sequential([

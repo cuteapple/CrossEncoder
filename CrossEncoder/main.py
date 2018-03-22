@@ -7,7 +7,6 @@ from model import Encoder, Decoder, input_shape
 from keras.models import Model
 from keras.layers import Input
 
-z_dim = 100
 from keras.datasets import mnist
 import numpy as np
 (x, y), _ = mnist.load_data()
@@ -65,11 +64,14 @@ y51 = yab(5,3)
 #G51 = img.flow(x1,y15,batch_size=256)
 
 for i in range(100):
-	print('epoch {} '.format(i))
-	M11.fit(x1,x1,batch_size=128,epochs=10,verbose=1)
-	M55.fit(x5,x5,batch_size=128,epochs=10,verbose=1)
-	M15.fit(x1,y15,batch_size=128,epochs=30,verbose=1)
-	M51.fit(x5,y51,batch_size=128,epochs=30,verbose=1)
+	verbose = 0
+	auto_epoch = 3
+	cross_epoch = 1
+	print(' -- epoch {} -- '.format(i))
+	M11.fit(x1,x1,batch_size=128, epochs=auto_epoch,verbose=verbose)
+	M55.fit(x5,x5,batch_size=128, epochs=auto_epoch,verbose=verbose)
+	M15.fit(x1,y15,batch_size=128, epochs=cross_epoch,verbose=verbose)
+	M51.fit(x5,y51,batch_size=128, epochs=cross_epoch,verbose=verbose)
 
 Model(i1,auto1).save('M11.h5')
 Model(i1,cross15).save('M15.h5')
