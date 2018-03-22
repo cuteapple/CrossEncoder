@@ -2,7 +2,7 @@ import keras
 import keras_contrib
 
 class AutoEncoder():
-	def __init__(self,compile=True):
+	def __init__(self,compile=False):
 
 		#parameters
 
@@ -30,10 +30,10 @@ class AutoEncoder():
 		if compile:
 			self.autoencoder.compile('sgd',loss='mse',metrics=['accuracy'])
 
-	def save(file):
+	def save(self,file):
 		self.autoencoder.save_weights(file)
 	
-	def load(file):
+	def load(self,file):
 		self.autoencoder.load_weights(file)
 
 	def newEncoder(self):
@@ -109,7 +109,7 @@ def main():
 	from keras.utils import plot_model
 	plot_model(a.encoder, to_file='e.png',show_shapes =True)
 	plot_model(a.decoder, to_file='d.png',show_shapes =True)
-	a.encoder.save_weights('test.h5')
-	a.encoder.load_weights('test.h5')
+	a.save('test.h5')
+	a.load('test.h5')
 
 main()
