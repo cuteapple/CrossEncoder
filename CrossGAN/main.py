@@ -221,11 +221,18 @@ class CrossEncoder():
 			print(self.b.name, " load failed")
 
 	def train(self, epoch=30000, batch_size=128, save_interval=20, save_path='save'):
+		
+		try:
+			import os
+			os.makedirs(save_path)
+		except:
+			pass
+
 		for round in range(epoch):
 			print(round)
-			self.train_autoencoder()
-			self.train_discrimator()
-			self.train_crossencoder()
+			#self.train_autoencoder()
+			#self.train_discrimator()
+			#self.train_crossencoder()
 
 			if round % save_interval == 0:
 				self.save_images(save_path,round)
@@ -245,8 +252,8 @@ class CrossEncoder():
 	def _gen_save_images(a,b):
 		im_a = a.dataset.load(1)
 		z_a = a.encoder.predict(im_a)
-		auto_a = a.decoder(z_a)
-		cross_b = b.decoder(z_a)
+		auto_a = a.decoder.predict(z_a)
+		cross_b = b.decoder.predict(z_a)
 		return im_a,auto_a,cross_b
 
 
@@ -254,6 +261,6 @@ if __name__ == '__main__':
 	E = CrossEncoder()
 	E.tryload()
 	try:
-		E.train()
+		E.train(300)
 	finally:
 		E.save()

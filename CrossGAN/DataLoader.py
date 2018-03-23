@@ -8,6 +8,7 @@ class DataLoader:
 		self.dir = dir
 		self.size = size
 		self.files = glob.glob(dir + '/*')
+		print('loadfrom {}, find {} files'.format(dir+'/*',len(self.files)))
 
 	def load(self,batch_size):
 		''' return a batch of data '''
@@ -28,6 +29,7 @@ class DataLoader:
 	def save_image(img,file):
 		''' reverse preprocess (no resize) and save to *file* '''
 		img*=255
+		img = img.reshape(img.shape[1:])
 		cv2.imwrite(file,img)
 
 def test():
