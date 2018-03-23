@@ -29,6 +29,7 @@ class AutoEncoder():
 		self.o = self.decoder(self.z)
 		self.d = self.discriminator(self.o)
 
+		self.autoencoder = keras.models.Model(self.i,self.o)
 		self.fullmodel = keras.models.Model(self.i,self.d)
 
 	def save(self):
@@ -123,49 +124,72 @@ class CrossEncoder():
 		import numpy
 
 		self.batch_size = 128
-		self.ones = numpy.ones(batch_size)
-		self.zeros = numpy.zeros(batch_size)
+		self.real_flags = numpy.ones(batch_size)
+		self.fake_flags = numpy.zeros(batch_size)
 
 		self.a = a = AutoEncoder('ukiyoe')
 		self.a.dataset = DataLoader('x2photo/train/ukiyoe',(a.width,a.height))
 		self.b = b = AutoEncoder('photo')
 		self.b.dataset = DataLoader('x2photo/train/photo',(b.width,b.height))
+		
+		a.discriminator.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'])
+		b.discriminator.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'])
 
-		fack_b = b.decoder(a.z)
-		fack_a = a.decoder(b.z)
+		a.autoencoder.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'])
+		a.autoencoder.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'])
 
-		a2b = b.discriminator(b.decoder(a.z))
-		b2a = a.discriminator(a.decoder(b.z))
+		input_a = a.i
+		input_b = b.i
 
+		fack_a = a.decoder(b.i)
+		fack_b = b.decoder(a.i)
+
+		da = a.discriminator(fack_a)
+		db = b.discriminator(fack_b)
+
+		# just for convenience, not train directly
 		class Models:pass
 		self.models = models = Models()
 		models.gab = Model(a.i, fack_b)
-		#compile gab
-		models.gba = Model(a.i, fack_b)
-		#compile gba
-		models.gab.trainable = False
-		models,gba.trainable = False
-		models.dab = 
-		
-		m_abD = Model(a.i,a2b)
-		m_baD = Model(b.i,b2a)
+		models.gba = Model(b.i, fack_a)
+
+	def generate_a(self,batch_size):
+		''' generate *batch_size* a from b '''
+		data = self.b.dataset.load(batch_size)
+		return self.models.gab.predict(data,batch_size=batch_size)
+
+	def generate_b(self,batch_size):
+		''' generate *batch_size* a from b '''
+		data = self.a.dataset.load(batch_size)
+		return self.models.gba.predict(data,batch_size=batch_size)
 
 	def train_discrimator(self):
-		''' train discirminator '''
+		''' train discirminator TODO: log loss '''
 		
-
-		za = a.encoder.predict
 		half_batch = batch_size/2
 
 		real_a = a.dataset.load(half_batch)
-		
-		fack_a = b.dataset.load(half_batch)
-		
+		fack_a = self.generate_a(half_batch)
+
+		real_b = b.dataset.load(half_batch)
+		fack_b = self.generate_b(half_batch)
+
+		self.a.discriminator.train_on_batch(real_a, self.real_flags)
+		self.a.discriminator.train_on_batch(fack_a, self.fake_flags)
+
+		self.b.discriminator.train_on_batch(real_b, self.real_flags)
+		self.b.discriminator.train_on_batch(fack_b, self.fake_flags)
+
+	def train_autoencoder(self):
+		real_a = self.a.dataset.load(self.batch_size)
+		real_b = self.b.dataset.load(self.batch_size)
+
+		self.a.autoencoder.train_on_batch(real_a,real_a)
+		self.b.autoencoder.train_on_batch(real_b,real_b)
+
+	def train_crossencoder(self):
 
 
-		a.encoder.predict(da)
-		db = b.dataset.load(batch_size)
-		a.encoder.predict(da)
 	
 	def xxx():
 		from keras.utils import plot_model
