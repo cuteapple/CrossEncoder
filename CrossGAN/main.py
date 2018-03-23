@@ -230,9 +230,9 @@ class CrossEncoder():
 
 		for round in range(epoch):
 			print(round)
-			#self.train_autoencoder()
-			#self.train_discrimator()
-			#self.train_crossencoder()
+			self.train_autoencoder()
+			self.train_discrimator()
+			self.train_crossencoder()
 
 			if round % save_interval == 0:
 				self.save_images(save_path,round)
@@ -261,6 +261,6 @@ if __name__ == '__main__':
 	E = CrossEncoder()
 	E.tryload()
 	try:
-		E.train(300)
+		E.train()
 	finally:
 		E.save()
