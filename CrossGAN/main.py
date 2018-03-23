@@ -3,10 +3,10 @@ import keras_contrib
 
 class AutoEncoder():
 	''' autoencoder + discriminator '''
-	def __init__(self):
+	def __init__(self,name):
 
 		#parameters
-
+		self.name = name
 		self.width = 128
 		self.height = 128
 		# parameter for [encoder, decoder]
@@ -31,10 +31,15 @@ class AutoEncoder():
 
 		self.fullmodel = keras.models.Model(self.i,self.d)
 
-	def save(self,file):
+	def save(self,file=None):
+		''' save to *file* or *{self.name}.h5* '''
+		if file is None:
+			file = '{}.h5'.format(self.name)
 		self.fullmodel.save_weights(file)
 	
-	def load(self,file):
+	def load(self,file=None):
+		if file is None:
+			file = '{}.h5'.format(self.name)
 		self.fullmodel.load_weights(file)
 
 	def newEncoder(self):
@@ -112,6 +117,10 @@ class AutoEncoder():
 		y = Add()([x,y])
 		y = LeakyReLU(alpha=0.2)(y)
 		return y
+	
+	def data(self,batch_size):
+		''' return a batch of data '''
+		...
 
 
 def main():
@@ -123,6 +132,11 @@ def main():
 	a2b = b.decoder(a.z)
 	b2a = a.decoder(b.z)
 
+	def train_discrimator():
+		''' train discirminator '''
+		a.data()
+	
+	
 	from keras.utils import plot_model
 	plot_model(a.encoder, to_file='e.png',show_shapes =True)
 	plot_model(a.decoder, to_file='d.png',show_shapes =True)
