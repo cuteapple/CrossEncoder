@@ -23,6 +23,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="cyclegan.py" />
+    <Compile Include="DataLoader.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="data_loader.py" />
     <Compile Include="main.py">
       <SubType>Code</SubType>

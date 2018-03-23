@@ -108,3 +108,5 @@ CycleGAN/x2photo/
 *.h5
 test/
 *.rar
+*.jpg
+*.png

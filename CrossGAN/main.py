@@ -33,11 +33,11 @@ class AutoEncoder():
 
 	def save(self):
 		''' save weights to {self.name} '''
-		self.fullmodel.save_weights(self.name)
+		self.fullmodel.save_weights(self.name+'.h5')
 	
 	def load(self):
 		''' load weights from {self.name} '''
-		self.fullmodel.load_weights(self.name)
+		self.fullmodel.load_weights(self.name+'.h5')
 
 	def newEncoder(self):
 		''' brand new encoder '''
@@ -116,15 +116,13 @@ class AutoEncoder():
 		return y
 	
 	def data(self,batch_size):
-		''' return a batch of data '''
 		...
-
 
 def main():
 	from keras.models import Model
 
-	a = AutoEncoder()
-	b = AutoEncoder()
+	a = AutoEncoder('A')
+	b = AutoEncoder('B')
 
 	a2b = b.decoder(a.z)
 	b2a = a.decoder(b.z)
@@ -138,7 +136,7 @@ def main():
 	plot_model(a.encoder, to_file='e.png',show_shapes =True)
 	plot_model(a.decoder, to_file='d.png',show_shapes =True)
 	plot_model(a.discriminator, to_file='di.png',show_shapes =True)
-	a.save('test.h5')
-	a.load('test.h5')
+	a.save()
+	a.load()
 
 main()
