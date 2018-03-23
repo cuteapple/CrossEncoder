@@ -2,7 +2,8 @@ import keras
 import keras_contrib
 
 class AutoEncoder():
-	def __init__(self,compile=False):
+	''' autoencoder + discriminator '''
+	def __init__(self):
 
 		#parameters
 
@@ -19,22 +20,22 @@ class AutoEncoder():
 		self.z_shape = self.encoder.output_shape[1:]
 		self.decoder = self.newDecoder()
 		assert self.ioshape == self.decoder.output_shape[1:]
-		
+		self.discriminator = self.newDiscriminator()
+
 		#some easy-to-use things 
 		
 		self.i = keras.layers.Input(self.ioshape)
 		self.z = self.encoder(self.i)
 		self.o = self.decoder(self.z)
+		self.d = self.discriminator(self.o)
 
-		self.autoencoder = keras.models.Model(self.i,self.o)
-		if compile:
-			self.autoencoder.compile('sgd',loss='mse',metrics=['accuracy'])
+		self.fullmodel = keras.models.Model(self.i,self.d)
 
 	def save(self,file):
-		self.autoencoder.save_weights(file)
+		self.fullmodel.save_weights(file)
 	
 	def load(self,file):
-		self.autoencoder.load_weights(file)
+		self.fullmodel.load_weights(file)
 
 	def newEncoder(self):
 		''' brand new encoder '''
@@ -68,6 +69,18 @@ class AutoEncoder():
 
 		return keras.models.Model(i,y)
 
+	def newDiscriminator(self):
+		''' TODO : parameterize '''
+		from keras.layers import Flatten,Dense
+		input_shape = self.ioshape
+		deeps = [16,32,64,128]
+		y = i = keras.layers.Input(input_shape)
+		for d in deeps:
+			y = self.convdown(y,d)
+		y = Flatten()(y)
+		y = Dense(1)(y)
+		return keras.models.Model(i,y)
+
 	@staticmethod
 	def convdown(x,deep,kernal=(5,5)):
 		''' conv 1/2 -> lrelu -> instanceNorm '''
@@ -91,6 +104,7 @@ class AutoEncoder():
 
 	@staticmethod
 	def convres(x,deep,kernal=(3,3)):
+		''' resblock '''
 		from keras.layers import Conv2D,Add,LeakyReLU
 		y = Conv2D(deep, kernel_size=kernal, strides=1, padding='same')(x)
 		y = LeakyReLU(alpha=0.2)(y)
@@ -99,7 +113,10 @@ class AutoEncoder():
 		y = LeakyReLU(alpha=0.2)(y)
 		return y
 
+
 def main():
+	from keras.models import Model
+
 	a = AutoEncoder()
 	b = AutoEncoder()
 
@@ -109,6 +126,7 @@ def main():
 	from keras.utils import plot_model
 	plot_model(a.encoder, to_file='e.png',show_shapes =True)
 	plot_model(a.decoder, to_file='d.png',show_shapes =True)
+	plot_model(a.discriminator, to_file='di.png',show_shapes =True)
 	a.save('test.h5')
 	a.load('test.h5')
 
