@@ -26,6 +26,9 @@
     <Compile Include="DataLoader.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FullDataLoader.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="main.py">
       <SubType>Code</SubType>
     </Compile>

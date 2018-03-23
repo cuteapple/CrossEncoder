@@ -1,5 +1,6 @@
 import keras
 import keras_contrib
+from FullDataLoader import DataLoader
 
 class AutoEncoder():
 	''' autoencoder + discriminator, all trainable'''
@@ -120,7 +121,6 @@ class CrossEncoder():
 	def __init__(self):
 		from keras.models import Model
 		from keras.layers import Input
-		from DataLoader import DataLoader
 		import numpy
 
 		self.auto_loss = 5
@@ -239,16 +239,15 @@ class CrossEncoder():
 			print('auto',end=' ', flush = True)
 			self.train_autoencoder()
 			print('dis',end=' ', flush = True)
-			self.train_discrimator()
+			#self.train_discrimator()
 			print('cross',end=' ', flush = True)
-			self.train_crossencoder()
+			#self.train_crossencoder()
 			print('end -- ' , str(timedelta(seconds=now()-start)), flush = True)
 
 			if round % save_interval == 0:
 				self.save_images(save_path,round)
 
 	def save_images(self,path,round):
-		from DataLoader import DataLoader
 		a,ra,cb = self._gen_save_images(self.a,self.b)
 		b,rb,ca = self._gen_save_images(self.b,self.a)
 
