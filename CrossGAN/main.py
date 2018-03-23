@@ -114,29 +114,89 @@ class AutoEncoder():
 		y = Add()([x,y])
 		y = LeakyReLU(alpha=0.2)(y)
 		return y
+
+class CrossEncoder():
+	def __init__(self):
+		from keras.models import Model
+		from keras.layers import Input
+		from DataLoader import DataLoader
+		import numpy
+
+		self.batch_size = 128
+		self.ones = numpy.ones(batch_size)
+		self.zeros = numpy.zeros(batch_size)
+
+		self.a = AutoEncoder('ukiyoe')
+		self.a.dataset = DataLoader('x2photo/train/ukiyoe',(a.width,a.height))
+		self.b = AutoEncoder('photo')
+		self.b.dataset = DataLoader('x2photo/train/photo',(b.width,b.height))
+
+		a2b = b.discriminator(b.decoder(a.z))
+		b2a = a.discriminator(a.decoder(b.z))
+
+		m_abD = Model(a.i,a2b)
+		m_baD = Model(b.i,b2a)
+
+		class models:pass
+		self.models = models()
+
+		enc = self.a.encoder
+		dec = self.b.decoder
+		dis = self.b.discriminator
+
+		enc.trainable = False
+		dec.trainable = False
+		dis.trainable = True
+		
+		o = dis(dec(enc(self.a.i)))
+
+		self.models.Da = 123
+		self.models.Db = 123
 	
-	def data(self,batch_size):
+	@staticmethod
+	def build_discriminator_model(source,target):
+		from keras.models import Model
+		enc = source.encoder
+		dec = target.decoder
+		dis = target.discriminator
+
+		enc.trainable = False
+		dec.trainable = False
+		dis.trainable = True
+
+		i = source.i
+		o = dis(dec(enc()))
+		Model(i,o)
+
+		pass
+
+	def train_discrimator(self):
+		''' train discirminator '''
+		
+
+		za = a.encoder.predict
+		half_batch = batch_size/2
+
+		real_a = a.dataset.load(half_batch)
+		
+		fack_a = b.dataset.load(half_batch)
+		
+
+
+		a.encoder.predict(da)
+		db = b.dataset.load(batch_size)
+		a.encoder.predict(da)
+	
+	def xxx():
+		from keras.utils import plot_model
+		plot_model(a.encoder, to_file='e.png',show_shapes =True)
+		plot_model(a.decoder, to_file='d.png',show_shapes =True)
+		plot_model(a.discriminator, to_file='di.png',show_shapes =True)
+		a.save()
+		a.load()
+
+	def train():
 		...
 
-def main():
-	from keras.models import Model
-
-	a = AutoEncoder('A')
-	b = AutoEncoder('B')
-
-	a2b = b.decoder(a.z)
-	b2a = a.decoder(b.z)
-
-	def train_discrimator():
-		''' train discirminator '''
-		a.data()
-	
-	
-	from keras.utils import plot_model
-	plot_model(a.encoder, to_file='e.png',show_shapes =True)
-	plot_model(a.decoder, to_file='d.png',show_shapes =True)
-	plot_model(a.discriminator, to_file='di.png',show_shapes =True)
-	a.save()
-	a.load()
-
-main()
+if __name__ == '__main__':
+	CrossEncoder().train()
