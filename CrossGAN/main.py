@@ -123,9 +123,12 @@ class CrossEncoder():
 		from DataLoader import DataLoader
 		import numpy
 
+		self.auto_loss = 5
+		self.cross_loss = 1
+
 		self.batch_size = 128
-		self.real_flags = numpy.ones(batch_size)
-		self.fake_flags = numpy.zeros(batch_size)
+		self.real_flags = numpy.ones(self.batch_size)
+		self.fake_flags = numpy.zeros(self.batch_size)
 
 		self.a = a = AutoEncoder('ukiyoe')
 		self.a.dataset = DataLoader('x2photo/train/ukiyoe',(a.width,a.height))
@@ -135,23 +138,31 @@ class CrossEncoder():
 		a.discriminator.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'])
 		b.discriminator.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'])
 
-		a.autoencoder.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'])
-		a.autoencoder.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'])
+		a.autoencoder.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'],loss_weights=[self.auto_loss])
+		a.autoencoder.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'],loss_weights=[self.auto_loss])
 
-		input_a = a.i
-		input_b = b.i
+		
+		fack_a = a.decoder(b.z)
+		fack_b = b.decoder(a.z)
 
-		fack_a = a.decoder(b.i)
-		fack_b = b.decoder(a.i)
+		a.discriminator.trainable = False
+		b.discriminator.trainable = False
 
 		da = a.discriminator(fack_a)
 		db = b.discriminator(fack_b)
+
+		cross_ab = Model(a.i,db)
+		cross_ba = Model(b.i,da)
+		cross_ab.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'], loss_weights=[self.cross_loss])
+		cross_ba.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'], loss_weights=[self.cross_loss])
 
 		# just for convenience, not train directly
 		class Models:pass
 		self.models = models = Models()
 		models.gab = Model(a.i, fack_b)
 		models.gba = Model(b.i, fack_a)
+		models.cross_ab = cross_ab
+		models.cross_ba = cross_ba
 
 	def generate_a(self,batch_size):
 		''' generate *batch_size* a from b '''
@@ -181,6 +192,7 @@ class CrossEncoder():
 		self.b.discriminator.train_on_batch(fack_b, self.fake_flags)
 
 	def train_autoencoder(self):
+		''' TODO? : combine two model on training? '''
 		real_a = self.a.dataset.load(self.batch_size)
 		real_b = self.b.dataset.load(self.batch_size)
 
@@ -188,19 +200,60 @@ class CrossEncoder():
 		self.b.autoencoder.train_on_batch(real_b,real_b)
 
 	def train_crossencoder(self):
+		''' TODO? : combine two model on training? '''
+		data = self.a.dataset.load(self.batch_size)
+		self.models.cross_ab.train_on_batch(data,self.real_flags)
+		data = self.b.dataset.load(self.batch_size)
+		self.models.cross_ba.train_on_batch(data,self.real_flags)
 
+	def save(self):
+		self.a.save()
+		self.b.save()
 
-	
-	def xxx():
-		from keras.utils import plot_model
-		plot_model(a.encoder, to_file='e.png',show_shapes =True)
-		plot_model(a.decoder, to_file='d.png',show_shapes =True)
-		plot_model(a.discriminator, to_file='di.png',show_shapes =True)
-		a.save()
-		a.load()
+	def tryload(self):
+		try:
+			self.a.load()
+		except:
+			print(self.a.name, " load failed")
+		try:
+			self.b.load()
+		except:
+			print(self.b.name, " load failed")
 
-	def train():
-		...
+	def train(self, epoch=30000, batch_size=128, save_interval=20, save_path='save'):
+		for round in range(epoch):
+			print(round)
+			self.train_autoencoder()
+			self.train_discrimator()
+			self.train_crossencoder()
+
+			if round % save_interval == 0:
+				self.save_images(save_path,round)
+
+	def save_images(self,path,round):
+		from DataLoader import DataLoader
+		a,ra,cb = self._gen_save_images(self.a,self.b)
+		b,rb,ca = self._gen_save_images(self.b,self.a)
+
+		l = [a,ra,cb,b,rb,ca]
+		for i,im in enumerate(l):
+			f = '{}/{}-{}.png'.format(path,round,i)
+			DataLoader.save_image(im,f)
+			
+
+	@staticmethod		
+	def _gen_save_images(a,b):
+		im_a = a.dataset.load(1)
+		z_a = a.encoder.predict(im_a)
+		auto_a = a.decoder(z_a)
+		cross_b = b.decoder(z_a)
+		return im_a,auto_a,cross_b
+
 
 if __name__ == '__main__':
-	CrossEncoder().train()
+	E = CrossEncoder()
+	E.tryload()
+	try:
+		E.train()
+	finally:
+		E.save()
