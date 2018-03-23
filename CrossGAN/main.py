@@ -31,16 +31,13 @@ class AutoEncoder():
 
 		self.fullmodel = keras.models.Model(self.i,self.d)
 
-	def save(self,file=None):
-		''' save to *file* or *{self.name}.h5* '''
-		if file is None:
-			file = '{}.h5'.format(self.name)
-		self.fullmodel.save_weights(file)
+	def save(self):
+		''' save weights to {self.name} '''
+		self.fullmodel.save_weights(self.name)
 	
-	def load(self,file=None):
-		if file is None:
-			file = '{}.h5'.format(self.name)
-		self.fullmodel.load_weights(file)
+	def load(self):
+		''' load weights from {self.name} '''
+		self.fullmodel.load_weights(self.name)
 
 	def newEncoder(self):
 		''' brand new encoder '''
