@@ -139,7 +139,7 @@ class CrossEncoder():
 		b.discriminator.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'])
 
 		a.autoencoder.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'],loss_weights=[self.auto_loss])
-		a.autoencoder.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'],loss_weights=[self.auto_loss])
+		b.autoencoder.compile(optimizer = 'rmsprop',loss = 'mse', metrics=['accuracy'],loss_weights=[self.auto_loss])
 
 		
 		fack_a = a.decoder(b.z)
