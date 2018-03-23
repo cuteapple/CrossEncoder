@@ -126,10 +126,6 @@ class CrossEncoder():
 		self.auto_loss = 5
 		self.cross_loss = 1
 
-		self.batch_size = 128
-		self.real_flags = numpy.ones(self.batch_size)
-		self.fake_flags = numpy.zeros(self.batch_size)
-
 		self.a = a = AutoEncoder('ukiyoe')
 		self.a.dataset = DataLoader('x2photo/train/ukiyoe',(a.width,a.height))
 		self.b = b = AutoEncoder('photo')
@@ -177,19 +173,19 @@ class CrossEncoder():
 	def train_discrimator(self):
 		''' train discirminator TODO: log loss '''
 		
-		half_batch = batch_size/2
+		half_batch = self.batch_size//2
 
-		real_a = a.dataset.load(half_batch)
+		real_a = self.a.dataset.load(half_batch)
 		fack_a = self.generate_a(half_batch)
 
-		real_b = b.dataset.load(half_batch)
+		real_b = self.b.dataset.load(half_batch)
 		fack_b = self.generate_b(half_batch)
 
-		self.a.discriminator.train_on_batch(real_a, self.real_flags)
-		self.a.discriminator.train_on_batch(fack_a, self.fake_flags)
+		self.a.discriminator.train_on_batch(real_a, self.real_flags[:half_batch])
+		self.a.discriminator.train_on_batch(fack_a, self.fake_flags[:half_batch])
 
-		self.b.discriminator.train_on_batch(real_b, self.real_flags)
-		self.b.discriminator.train_on_batch(fack_b, self.fake_flags)
+		self.b.discriminator.train_on_batch(real_b, self.real_flags[:half_batch])
+		self.b.discriminator.train_on_batch(fack_b, self.fake_flags[:half_batch])
 
 	def train_autoencoder(self):
 		''' TODO? : combine two model on training? '''
@@ -221,18 +217,32 @@ class CrossEncoder():
 			print(self.b.name, " load failed")
 
 	def train(self, epoch=30000, batch_size=128, save_interval=20, save_path='save'):
-		
+
 		try:
 			import os
 			os.makedirs(save_path)
 		except:
 			pass
 
+		
+		import numpy
+		self.batch_size = batch_size
+		self.real_flags = numpy.ones(self.batch_size)
+		self.fake_flags = numpy.zeros(self.batch_size)
+
+		from datetime import timedelta
+		from time import time as now
+		start = now()
+		
 		for round in range(epoch):
-			print(round)
+			print(round,end=' ', flush = True)
+			print('auto',end=' ', flush = True)
 			self.train_autoencoder()
+			print('dis',end=' ', flush = True)
 			self.train_discrimator()
+			print('cross',end=' ', flush = True)
 			self.train_crossencoder()
+			print('end -- ' , str(timedelta(seconds=now()-start)), flush = True)
 
 			if round % save_interval == 0:
 				self.save_images(save_path,round)
