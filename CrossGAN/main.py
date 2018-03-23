@@ -2,7 +2,7 @@ import keras
 import keras_contrib
 
 class AutoEncoder():
-	''' autoencoder + discriminator '''
+	''' autoencoder + discriminator, all trainable'''
 	def __init__(self,name):
 
 		#parameters
@@ -126,49 +126,29 @@ class CrossEncoder():
 		self.ones = numpy.ones(batch_size)
 		self.zeros = numpy.zeros(batch_size)
 
-		self.a = AutoEncoder('ukiyoe')
+		self.a = a = AutoEncoder('ukiyoe')
 		self.a.dataset = DataLoader('x2photo/train/ukiyoe',(a.width,a.height))
-		self.b = AutoEncoder('photo')
+		self.b = b = AutoEncoder('photo')
 		self.b.dataset = DataLoader('x2photo/train/photo',(b.width,b.height))
+
+		fack_b = b.decoder(a.z)
+		fack_a = a.decoder(b.z)
 
 		a2b = b.discriminator(b.decoder(a.z))
 		b2a = a.discriminator(a.decoder(b.z))
 
+		class Models:pass
+		self.models = models = Models()
+		models.gab = Model(a.i, fack_b)
+		#compile gab
+		models.gba = Model(a.i, fack_b)
+		#compile gba
+		models.gab.trainable = False
+		models,gba.trainable = False
+		models.dab = 
+		
 		m_abD = Model(a.i,a2b)
 		m_baD = Model(b.i,b2a)
-
-		class models:pass
-		self.models = models()
-
-		enc = self.a.encoder
-		dec = self.b.decoder
-		dis = self.b.discriminator
-
-		enc.trainable = False
-		dec.trainable = False
-		dis.trainable = True
-		
-		o = dis(dec(enc(self.a.i)))
-
-		self.models.Da = 123
-		self.models.Db = 123
-	
-	@staticmethod
-	def build_discriminator_model(source,target):
-		from keras.models import Model
-		enc = source.encoder
-		dec = target.decoder
-		dis = target.discriminator
-
-		enc.trainable = False
-		dec.trainable = False
-		dis.trainable = True
-
-		i = source.i
-		o = dis(dec(enc()))
-		Model(i,o)
-
-		pass
 
 	def train_discrimator(self):
 		''' train discirminator '''
