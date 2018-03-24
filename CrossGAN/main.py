@@ -95,10 +95,12 @@ class CrossEncoder():
 			self.a.load()
 		except:
 			print(self.a.name, " load failed")
+			pass
 		try:
 			self.b.load()
 		except:
 			print(self.b.name, " load failed")
+			pass
 
 	def train(self, epoch=30000, batch_size=128, save_interval=20, save_path='save'):
 
