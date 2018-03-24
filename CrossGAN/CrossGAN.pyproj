@@ -22,6 +22,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AutoEncoder.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="cyclegan.py" />
     <Compile Include="DataLoader.py">
       <SubType>Code</SubType>
