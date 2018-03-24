@@ -238,9 +238,9 @@ class CrossEncoder():
 			print(round,end=' ', flush = True)
 			print('auto',end=' ', flush = True)
 			self.train_autoencoder()
-			print('dis',end=' ', flush = True)
+			#print('dis',end=' ', flush = True)
 			#self.train_discrimator()
-			print('cross',end=' ', flush = True)
+			#print('cross',end=' ', flush = True)
 			#self.train_crossencoder()
 			print('end -- ' , str(timedelta(seconds=now()-start)), flush = True)
 
@@ -270,6 +270,6 @@ if __name__ == '__main__':
 	E = CrossEncoder()
 	E.tryload()
 	try:
-		E.train()
+		E.train(10000)
 	finally:
 		E.save()
