@@ -5,9 +5,9 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{dd31bb4f-3b4c-45b1-ace7-5b77954ff615}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>CycleGAN/encoder.py</StartupFile>
+    <StartupFile>CrossEncoder/main.py</StartupFile>
     <SearchPath />
-    <WorkingDirectory>CycleGAN</WorkingDirectory>
+    <WorkingDirectory>CrossEncoder</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
@@ -22,12 +22,21 @@
   <ItemGroup>
     <Folder Include="CycleGAN\" />
     <Folder Include="DCGAN\" />
+    <Folder Include="CrossEncoder\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="CycleGAN\README.md" />
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CrossEncoder\classifier.py" />
+    <Compile Include="CrossEncoder\main.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CrossEncoder\model.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CrossEncoder\test.py" />
     <Compile Include="CycleGAN\build_data.py" />
     <Compile Include="CycleGAN\classifier.py">
       <SubType>Code</SubType>
