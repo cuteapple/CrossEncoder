@@ -2,12 +2,8 @@ import keras
 
 input_shape=(28,28,1)
 model_path = 'mnist_classifier.h5'
-epochs = 50
+epochs = 200
 batch_size = 128
-
-import os
-model_path = os.path.join(os.path.dirname(__file__), model_path)
-del os
 
 def new_model():
 	from keras.models import Sequential
@@ -54,28 +50,24 @@ def load_model(new_on_fail=True):
 
 def train_model(model):
 	(x_train,y_train),(x_test,y_test) = load_mnist()
-	model.fit(x_train, y_train,
-			  batch_size=batch_size,
-			  epochs=epochs,
-			  verbose=1,
-			  validation_data=(x_test, y_test))
+	from keras.preprocessing.image import ImageDataGenerator
+	imG = ImageDataGenerator(rotation_range=60,width_shift_range=10,height_shift_range=10,zoom_range=0.5)
+	model.fit_generator(
+		imG.flow(x_train,y_train,batch_size=batch_size),
+		steps_per_epoch=len(x_train)//batch_size+1,
+		verbose=1,
+		validation_data = (x_test,y_test),
+		epochs=epochs
+		)
 
 def save_model(model):
 	print('saving {}'.format(model_path))
 	model.save_weights(model_path)
 
-def test_model(model):
-	_,(x_test,y_test) = load_mnist()
-	score = model.evaluate(x_test, y_test, verbose=0)
-	print('Test loss:', score[0])
-	print('Test accuracy:', score[1])
-
-
 def main():
 	model = load_model(new_on_fail=True)
 	train_model(model)
 	save_model(model)
-	#test_model(model)
 
 if __name__ == '__main__':
 	main()
