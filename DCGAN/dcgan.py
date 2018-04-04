@@ -1,41 +1,52 @@
 import keras
-from keras.layers.normalization import BatchNormalization
+from keras.models import Sequential
+from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation
+from keras_contrib.layers.normalization import InstanceNormalization 
 import classifier
+
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("-e","--epochs", default=1000, type=int)
+parser.add_argument("-b","--batch_size", default=128, type=int)
+args = parser.parse_args()
 
 output_shape = (28,28,1)
 input_shape = (100,)
 model_path = 'mnist_generator.h5'
-epochs = 50
-batch_size = 32
+epochs = args.epochs
+batch_size = args.batch_size
+
+print(epochs,batch_size,model_path)
+
+del parser
+del args
+del argparse
+
+
 
 
 def new_generator():
-
-	from keras.models import Sequential
-	from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation
-
-	return Sequential(name='generator',
+	return Sequential(name='G',
 		layers=[
 			Dense(128 * 7 * 7, activation="relu", input_shape=input_shape),
 			Reshape((7, 7, 128)),
-			BatchNormalization(momentum=0.8),
+			InstanceNormalization(),
 			UpSampling2D(),
 			Conv2D(128, kernel_size=3, padding="same"),
 			Activation("relu"),
-			BatchNormalization(momentum=0.8),
+			InstanceNormalization(),
 			UpSampling2D(),
 			Conv2D(64, kernel_size=3, padding="same"),
 			Activation("relu"),
-			BatchNormalization(momentum=0.8),
+			InstanceNormalization(),
 			Conv2D(1, kernel_size=3, padding="same"),
-			Activation("sigmoid")
-		])
+			Activation("sigmoid")])
 
 def new_model():
-	'''return GAN,G,D'''
-	''' not new D '''
+	''' load D, create G, return GAN,G,D'''
+
 	D = classifier.load_model(new_on_fail=False)
-	D.trainable=False
+	D.trainable = False
 	G = new_generator()
 
 	input = keras.layers.Input(input_shape)
@@ -65,29 +76,30 @@ def z_generator():
 	def g():
 		answer = np.eye(10)[np.random.choice(10,batch_size)]
 		z = np.random.normal(size=(batch_size,*input_shape))
-		z[:,0:10]=answer
+		z[:,0:10] = answer
 		return z,answer
 	while True:
 		yield g()
 
-def train_model(model):
+def train_model(models):
+	model = models[0]
 	model.fit_generator(z_generator(),steps_per_epoch=100,epochs=epochs)
 
-def save_model(model):
+def save_model(models):
+	G = models[1]
 	print('saving {}'.format(model_path))
-	model.save_weights(model_path)
+	G.save_weights(model_path)
 
-
-def main():
-	model,G,D = load_model(new_on_fail=True)
-	
+def plot():
 	from keras.utils import plot_model
 	plot_model(model, to_file='model.png',show_shapes=True)
 	plot_model(G, to_file='G.png',show_shapes=True)
 	plot_model(D, to_file='D.png',show_shapes=True)
-	
-	train_model(model)
-	save_model(model)
+
+def main():
+	models = load_model(new_on_fail=True)
+	train_model(models)
+	save_model(models)
 
 if __name__ == '__main__':
 	main()

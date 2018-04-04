@@ -1,1 +1,2 @@
-
+import dcgan
+dcgan.main()
