@@ -1,9 +1,12 @@
 import keras
+import numpy as np
 
-input_shape=(28,28,1)
+input_shape = (28,28,1)
 model_path = 'mnist_classifier.h5'
 epochs = 200
 batch_size = 128
+noise_factor = 0.5
+noise_y_factor = 0
 
 def new_model():
 	from keras.models import Sequential
@@ -25,7 +28,7 @@ def load_mnist():
 	if not loaded_mnist:
 		from keras.datasets import mnist
 		def transform(x):
-			return x.astype('float32').reshape(-1,*input_shape)/255
+			return x.astype('float32').reshape(-1,*input_shape) / 255
 
 		(x_train, y_train), (x_test, y_test) = mnist.load_data()
 		x_train = transform(x_train)
@@ -47,17 +50,24 @@ def load_model(new_on_fail=True):
 			print(str(e))
 			print('load weights failed, recreate')
 	return model
+	
+def data():
+	(x,y),(a,b) = load_mnist()
+	x_noizy = x + noise_factor * np.random.normal(loc=0.0, scale=1.0, size=x.shape)
+	y_noizy = y * noise_y_factor
+	x_noizy = np.clip(x_noizy,0.0,1.0)
+	y_noizy = np.clip(y_noizy,0.0,1.0)
+	x = np.concatenate(x,x_noizy)
+	y = np.concatenate(y,y_noizy)
+	return (x,y),(a,b)
 
 def train_model(model):
-	(x_train,y_train),(x_test,y_test) = load_mnist()
-	from keras.preprocessing.image import ImageDataGenerator
-	imG = ImageDataGenerator(rotation_range=60,width_shift_range=10,height_shift_range=10,zoom_range=0.5)
-	model.fit_generator(
-		imG.flow(x_train,y_train,batch_size=batch_size),
-		steps_per_epoch=len(x_train)//batch_size+1,
-		verbose=1,
-		validation_data = (x_test,y_test),
-		epochs=epochs
+	(x,y),(tx,ty) = data()
+	model.fit(
+		x,y,
+		batch_size = batch_size,
+		epochs=epochs,
+		validation_data=(tx,ty)
 		)
 
 def save_model(model):
