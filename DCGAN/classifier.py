@@ -6,7 +6,7 @@ model_path = 'mnist_classifier.h5'
 epochs = 200
 batch_size = 128
 noise_factor = 0.5
-noise_y_factor = 0
+noise_y_factor = 0.5
 
 def new_model():
 	from keras.models import Sequential

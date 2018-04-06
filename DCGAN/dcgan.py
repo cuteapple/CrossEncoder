@@ -23,8 +23,6 @@ del args
 del argparse
 
 
-
-
 def new_generator():
 	return Sequential(name='G',
 		layers=[
