@@ -57,8 +57,9 @@ def data():
 	y_noizy = y * noise_y_factor
 	x_noizy = np.clip(x_noizy,0.0,1.0)
 	y_noizy = np.clip(y_noizy,0.0,1.0)
-	x = np.concatenate(x,x_noizy)
-	y = np.concatenate(y,y_noizy)
+	print(x.shape,x_noizy.shape,y.shape,y_noizy.shape)
+	x = np.concatenate((x,x_noizy), axis=0)
+	y = np.concatenate((y,y_noizy), axis=0)
 	return (x,y),(a,b)
 
 def train_model(model):
