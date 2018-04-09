@@ -8,10 +8,10 @@ this repo contains multiple project seperate by tag (usually also directory)
 
 ---
 
-### some branchs
-
+### some branch
+ - CCDCGAN : classifier based GAN
  - AutoGAN : auto encoder + GAN => style transfer
  - CrossEncoder : AutoGAN on mnist
  - autoEncoder : basic autoencoder
- [//]: # - some other branchs : maybe I forget to include them?
+ [//]: # - some other branches : maybe I forget to include them?
  
