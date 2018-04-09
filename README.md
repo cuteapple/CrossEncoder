@@ -11,7 +11,7 @@ this repo contains multiple project seperate by tag (usually also directory)
 ### some branch
 
  - CCDCGAN : classifier based GAN
- - AutoGAN : auto encoder + GAN => style transfer
+ - AutoGAN : auto encoder + GAN => style transfer [suspend : no resource(GPU), no time]
  - CrossEncoder : AutoGAN on mnist
  - autoEncoder : basic autoencoder
  
