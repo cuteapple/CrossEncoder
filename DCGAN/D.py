@@ -112,4 +112,4 @@ if __name__ == "__main__":
 	d.train(epochs=args.epochs,batch_size=args.batch_size)
 
 	print('saving ...')
-	d.save(args.path)
+	d.save_weights(args.path)

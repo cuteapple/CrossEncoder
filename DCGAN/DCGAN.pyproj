@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{94a5bbb7-9d61-4a3f-bc62-e50d8f4c4048}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>dcgan.py</StartupFile>
+    <StartupFile>test_G.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -19,11 +19,8 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="classifier.py" />
-    <Compile Include="dcgan.py" />
-    <Compile Include="main.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="D.py" />
+    <Compile Include="G.py" />
     <Compile Include="test_G.py" />
     <Compile Include="test_sample.py" />
   </ItemGroup>

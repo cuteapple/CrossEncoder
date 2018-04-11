@@ -3,10 +3,10 @@ import numpy as np
 from keras.models import Sequential,Model
 from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
 from keras_contrib.layers.normalization import InstanceNormalization 
-from classifier import D
+from D import D
 
 
-def new_G():
+def new_G(input_shape):
 	return Sequential(name='G',
 		layers=[Dense(128 * 7 * 7, activation="relu", input_shape=input_shape),
 			Reshape((7, 7, 128)),
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 	input_shape = (z_len,)
 	
 	print('loading G ...')
-	g = new_G()
+	g = new_G(input_shape)
 	try: g.load_weights(args.path)
 	except: print('load weight for G failed')
 	
