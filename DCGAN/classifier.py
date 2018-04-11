@@ -1,84 +1,104 @@
 import keras
 import numpy as np
 
-input_shape = (28,28,1)
-model_path = 'mnist_classifier.h5'
-epochs = 200
-batch_size = 128
-noise_factor = 0.5
-noise_y_factor = 0.5
 
-def new_model():
-	from keras.models import Sequential
-	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
-	model = Sequential(name='mnist_classifier')
-	model.add(Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=input_shape))
-	model.add(Conv2D(64, kernel_size=3, strides=2, activation='relu'))
-	model.add(Dropout(0.25))
-	model.add(Flatten())
-	model.add(Dense(128, activation='relu'))
-	model.add(Dropout(0.5))
-	model.add(Dense(10))
-	model.compile(optimizer='adadelta', loss='mse' ,metrics=['accuracy'])
-	return model
+class NoizyData:
+	'''noizy mnist data'''
+	def __init__(self, noise_sigma=1.0, noise_scaler=0.5, y_scaler=0.5):
+		noise_mean = 0.0
 
-loaded_mnist = False
-def load_mnist():
-	global loaded_mnist
-	if not loaded_mnist:
+		(x,y),(tx,ty) = self.load_mnist()
+
+		noisy_x = x + noise_scaler * np.random.normal(noise_mean, noise_sigma, size=x.shape)
+		noisy_y = y * y_scaler
+		noisy_x = np.clip(noisy_x,0.0,1.0)
+		noisy_y = noisy_y
+
+		self.x = np.concatenate((x,x_noizy), axis=0)
+		self.y = np.concatenate((y,y_noizy), axis=0)
+		self.tx = tx
+		self.ty = ty
+
+	def train(self):
+		return self.x,self.y
+
+	def test(self):
+		return self.tx,self.ty
+
+	@staticmethod
+	def transform(x):
+		return x.astype('float32').reshape(-1,28,28,1) / 255
+	
+	@staticmethod
+	def transform_inv(x):
+		return x * 255
+
+	@staticmethod
+	def load_mnist():
 		from keras.datasets import mnist
-		def transform(x):
-			return x.astype('float32').reshape(-1,*input_shape) / 255
-
 		(x_train, y_train), (x_test, y_test) = mnist.load_data()
-		x_train = transform(x_train)
-		x_test = transform(x_test)
+		x_train = NoizyData.transform(x_train)
+		x_test = NoizyData.transform(x_test)
 		y_train = keras.utils.to_categorical(y_train, 10)
 		y_test = keras.utils.to_categorical(y_test, 10)
-		loaded_mnist = (x_train,y_train),(x_test,y_test)
-	return loaded_mnist
+		return (x_train,y_train),(x_test,y_test)
 
-def load_model(new_on_fail=True):
-	model = new_model()
-	try:
-		print('loading {}'.format(model_path))
-		model.load_weights(model_path)
-	except (OSError,ValueError) as e:
-		if not new_on_fail:
-			raise
-		else:
-			print(str(e))
-			print('load weights failed, recreate')
-	return model
+
+class D:
+	default_path = "mnist_classifier.h5"
+
+	def __init__(self):
+		self.model = self.new_classifier()
+
+	@staticmethod
+	def new_classifier():
+		from keras.models import Sequential
+		from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
+		model = Sequential(name='mnist_classifier',
+			layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=input_shape),
+				Conv2D(64, kernel_size=3, strides=2, activation='relu'),
+				Dropout(0.25),
+				Flatten(),
+				Dense(128, activation='relu'),
+				Dropout(0.5),
+				Dense(10)])
+		return model
 	
-def data():
-	(x,y),(a,b) = load_mnist()
-	x_noizy = x + noise_factor * np.random.normal(loc=0.0, scale=1.0, size=x.shape)
-	y_noizy = y * noise_y_factor
-	x_noizy = np.clip(x_noizy,0.0,1.0)
-	y_noizy = np.clip(y_noizy,0.0,1.0)
-	print(x.shape,x_noizy.shape,y.shape,y_noizy.shape)
-	x = np.concatenate((x,x_noizy), axis=0)
-	y = np.concatenate((y,y_noizy), axis=0)
-	return (x,y),(a,b)
+	@classmethod
+	def Load(cls,path=None,or_new=False):
+		inst = cls()
+		if path is None:
+			path = cls.default_path
+		try:
+			inst.load_weights(path)
+		except:
+			print('load weight fail')
+			if not or_new:
+				raise
+		return inst
 
-def train_model(model):
-	(x,y),(tx,ty) = data()
-	model.fit(
-		x,y,
-		batch_size = batch_size,
-		epochs=epochs,
-		validation_data=(tx,ty)
-		)
+	def save_weights(self,path):
+		self.model.save_weights(path)
+	def load_weights(self,path):
+		self.model.load_weights(path)
 
-def save_model(model):
-	print('saving {}'.format(model_path))
-	model.save_weights(model_path)
+	def compile(self,optimizer='adadelta', loss='mse' ,metrics=['accuracy'],*args):
+		self.model.compile(optimizer=optimizer, loss=loss, metrics=metrics,*args)
+
+	def train(self,epochs=200,batch_size=128):
+		data = NoizyData()
+		x,y = data.train()
+		tx,ty = data.test()
+
+		self.model.fit(x,y,
+			batch_size = batch_size,
+			epochs=epochs,
+			validation_data=(tx,ty))
 
 def main():
-	model = load_model(new_on_fail=True)
-	train_model(model)
-	save_model(model)
+	d = D.Load(default_path,or_new=True)
+	d.train()
+	d.save(default_path)
 
 if __name__ == '__main__':
 	main()
