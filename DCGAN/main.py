@@ -1,2 +1,0 @@
-import dcgan
-dcgan.main()

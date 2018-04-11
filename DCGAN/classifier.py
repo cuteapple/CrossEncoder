@@ -97,12 +97,21 @@ class D:
 			epochs=epochs,
 			validation_data=(tx,ty))
 
-def main():
-	d = D.Load(or_new=True)
+if __name__ == "__main__":
+
+	import argparse
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-e","--epochs", default=200, type=int)
+	parser.add_argument("-b","--batch_size", default=128, type=int)
+	parser.add_argument("-p","--path", default="mnist_classifier.h5", type=str)
+	args = parser.parse_args()
+
+	print('loading weights ...')
+	d = D.Load(args.path,True)
+	
+	print('training ...')
 	d.compile()
-	d.train(1,1)
-	d.save()
+	d.train(epochs=args.epochs,batch_size=args.batch_size)
 
-if __name__ == '__main__':
-	main()
-
+	print('saving ...')
+	d.save(args.path)
