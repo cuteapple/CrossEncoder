@@ -1,32 +1,14 @@
 import keras
-from keras.models import Sequential
-from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation
+import numpy as np
+from keras.models import Sequential,Model
+from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
 from keras_contrib.layers.normalization import InstanceNormalization 
-import classifier
-
-import argparse
-parser = argparse.ArgumentParser()
-parser.add_argument("-e","--epochs", default=1000, type=int)
-parser.add_argument("-b","--batch_size", default=128, type=int)
-args = parser.parse_args()
-
-output_shape = (28,28,1)
-input_shape = (100,)
-model_path = 'mnist_generator.h5'
-epochs = args.epochs
-batch_size = args.batch_size
-
-print(epochs,batch_size,model_path)
-
-del parser
-del args
-del argparse
+from classifier import D
 
 
-def new_generator():
+def new_G():
 	return Sequential(name='G',
-		layers=[
-			Dense(128 * 7 * 7, activation="relu", input_shape=input_shape),
+		layers=[Dense(128 * 7 * 7, activation="relu", input_shape=input_shape),
 			Reshape((7, 7, 128)),
 			InstanceNormalization(),
 			UpSampling2D(),
@@ -40,64 +22,51 @@ def new_generator():
 			Conv2D(1, kernel_size=3, padding="same"),
 			Activation("sigmoid")])
 
-def new_model():
-	''' load D, create G, return GAN,G,D'''
 
-	D = classifier.load_model(new_on_fail=False)
-	D.trainable = False
-	G = new_generator()
-
-	input = keras.layers.Input(input_shape)
-	model = keras.models.Model(input,D(G(input)))
-	model.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'])
-
-	return model,G,D
-
-def load_model(new_on_fail=True):
-	m,G,D = new_model()
-	try:
-		print('loading {}'.format(model_path))
-		G.load_weights(model_path)
-	except (OSError,ValueError) as e:
-		if not new_on_fail:
-			print(str(e))
-			print('load weights failed, terminate')
-			raise SystemExit()
-		else:
-			print(str(e))
-			print('load weights failed, recreate')
-	return m,G,D
-
-
-def z_generator():
-	import numpy as np
+def z(batch_size,length):
 	def g():
 		answer = np.eye(10)[np.random.choice(10,batch_size)]
-		z = np.random.normal(size=(batch_size,*input_shape))
+		z = np.random.normal(size=(batch_size,length))
 		z[:,0:10] = answer
 		return z,answer
 	while True:
 		yield g()
 
-def train_model(models):
-	model = models[0]
-	model.fit_generator(z_generator(),steps_per_epoch=100,epochs=epochs)
-
-def save_model(models):
-	G = models[1]
-	print('saving {}'.format(model_path))
-	G.save_weights(model_path)
-
-def plot():
-	from keras.utils import plot_model
-	plot_model(model, to_file='model.png',show_shapes=True)
-	plot_model(G, to_file='G.png',show_shapes=True)
-	plot_model(D, to_file='D.png',show_shapes=True)
-
-def main():
-	models = load_model(new_on_fail=True)
-	train_model(models)
-	save_model(models)
-
 if __name__ == '__main__':
-	main()
+	
+	import argparse
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-e","--epochs", default=1000, type=int)
+	parser.add_argument("-s","--steps", default=64, type=int)
+	parser.add_argument("-b","--batch_size", default=128, type=int)
+	parser.add_argument("-p","--path", default="G.h5", type=str)
+	parser.add_argument("-dp","--discriminator_path", default="D.h5", type=str)
+	args = parser.parse_args()
+	print(args)
+
+	output_shape = (28,28,1)
+	z_len = 20
+	input_shape = (z_len,)
+	
+	print('loading G ...')
+	g = new_G()
+	try: g.load_weights(args.path)
+	except: print('load weight for G failed')
+	
+	print('loading D ...')
+	d = D.Load(args.discriminator_path)
+	d = d.model
+	d.trainable = False
+
+	print('linking G & D ...')
+	input = Input(input_shape)
+	m = Model(input,d(g(input)))
+	m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'])
+
+	print('training ...')
+	m.fit_generator(z(args.batch_size,z_len),
+		steps_per_epoch = args.steps,
+		epochs=args.epochs)
+
+	print('saving ...')
+	g.save_weights(args.path)

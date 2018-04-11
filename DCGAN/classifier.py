@@ -45,8 +45,6 @@ class NoizyData:
 
 
 class D:
-	default_path = "mnist_classifier.h5"
-
 	def __init__(self):
 		self.model = self.new_classifier()
 
@@ -103,7 +101,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-e","--epochs", default=200, type=int)
 	parser.add_argument("-b","--batch_size", default=128, type=int)
-	parser.add_argument("-p","--path", default="mnist_classifier.h5", type=str)
+	parser.add_argument("-p","--path", default="D.h5", type=str)
 	args = parser.parse_args()
 
 	print('loading weights ...')
