@@ -14,8 +14,8 @@ class NoizyData:
 		noisy_x = np.clip(noisy_x,0.0,1.0)
 		noisy_y = noisy_y
 
-		self.x = np.concatenate((x,x_noizy), axis=0)
-		self.y = np.concatenate((y,y_noizy), axis=0)
+		self.x = np.concatenate((x,noisy_x), axis=0)
+		self.y = np.concatenate((y,noisy_y), axis=0)
 		self.tx = tx
 		self.ty = ty
 
@@ -55,7 +55,7 @@ class D:
 		from keras.models import Sequential
 		from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
 		model = Sequential(name='mnist_classifier',
-			layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=input_shape),
+			layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=(28,28,1)),
 				Conv2D(64, kernel_size=3, strides=2, activation='relu'),
 				Dropout(0.25),
 				Flatten(),
@@ -77,7 +77,9 @@ class D:
 				raise
 		return inst
 
-	def save_weights(self,path):
+	def save_weights(self,path=None):
+		if path is None:
+			path = D.default_path
 		self.model.save_weights(path)
 	def load_weights(self,path):
 		self.model.load_weights(path)
@@ -96,9 +98,10 @@ class D:
 			validation_data=(tx,ty))
 
 def main():
-	d = D.Load(default_path,or_new=True)
-	d.train()
-	d.save(default_path)
+	d = D.Load(or_new=True)
+	d.compile()
+	d.train(1,1)
+	d.save()
 
 if __name__ == '__main__':
 	main()
