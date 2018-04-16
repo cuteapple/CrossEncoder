@@ -16,7 +16,7 @@ except:
 	pass
 
 g = G.new_G((20,))
-#g.load_weights(args.path)
+g.load_weights(args.path)
 
 z,y = next(G.z(100,20))
 x = g.predict(z)
