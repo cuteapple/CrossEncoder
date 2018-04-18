@@ -85,8 +85,7 @@ class D:
 	def compile(self,optimizer='adadelta', loss='mse' ,metrics=['accuracy'],*args):
 		self.model.compile(optimizer=optimizer, loss=loss, metrics=metrics,*args)
 
-	def train(self,epochs=200,batch_size=128):
-		data = NoizyData()
+	def train(self,data,epochs=200,batch_size=128):
 		x,y = data.train()
 		tx,ty = data.test()
 
@@ -102,6 +101,7 @@ if __name__ == "__main__":
 	parser.add_argument("-e","--epochs", default=200, type=int)
 	parser.add_argument("-b","--batch_size", default=128, type=int)
 	parser.add_argument("-p","--path", default="D.h5", type=str)
+	parser.add_argument("-ny","--noise_y", default=0.5, type=float)
 	args = parser.parse_args()
 
 	print('loading weights ...')
@@ -109,6 +109,7 @@ if __name__ == "__main__":
 	
 	print('training ...')
 	d.compile()
+	data = NoizyData(y_scaler=args.noise_y)
 	d.train(epochs=args.epochs,batch_size=args.batch_size)
 
 	print('saving ...')
