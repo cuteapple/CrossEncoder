@@ -110,7 +110,7 @@ if __name__ == "__main__":
 	print('training ...')
 	d.compile()
 	data = NoizyData(y_scaler=args.noise_y)
-	d.train(epochs=args.epochs,batch_size=args.batch_size)
+	d.train(data,epochs=args.epochs,batch_size=args.batch_size)
 
 	print('saving ...')
 	d.save_weights(args.path)
