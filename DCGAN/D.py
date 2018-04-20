@@ -16,6 +16,9 @@ class NoizyData:
 		self.noise_sigma = 1.0
 		self.choicepool = np.arange(self.x.shape[0])
 
+	def train_generator(self,size):
+		while True:
+			yield self.train_batch(size)
 
 	def train_batch(self,size):
 		choice = np.random.choice(self.choicepool,size)
@@ -25,13 +28,13 @@ class NoizyData:
 		scale = np.random.uniform(size=size)
 		
 		dx = np.random.normal(size=x.shape)
-		dx = dx.reshape((size,-1))*scale[:,None]
+		dx = dx.reshape((size,-1)) * scale[:,None]
 		dx = dx.reshape(x.shape)
-
-		sy = scale
 		
-		x = np.clip(x+dx,0,1)
-		y = y*sy[:,None]
+		sy = (1 - scale)[:,None] * self.sy
+
+		x = np.clip(x + dx,0,1)
+		y = y * sy
 
 		return x,y
 
@@ -99,13 +102,14 @@ class D:
 		self.model.compile(optimizer=optimizer, loss=loss, metrics=metrics,*args)
 
 	def train(self,data,epochs=200,batch_size=128):
-		x,y = data.train()
-		tx,ty = data.test()
 
-		self.model.fit(x,y,
-			batch_size = batch_size,
+		self.model.fit_generator(
+			data.train_generator(batch_size),
+			steps_per_epoch=data.x.shape[0]//batch_size,
 			epochs=epochs,
-			validation_data=(tx,ty))
+			validation_data=data.test(),
+			shuffle=False # shuffle inside generator
+			)
 
 if __name__ == "__main__":
 
@@ -114,15 +118,16 @@ if __name__ == "__main__":
 	parser.add_argument("-e","--epochs", default=200, type=int)
 	parser.add_argument("-b","--batch_size", default=128, type=int)
 	parser.add_argument("-p","--path", default="D.h5", type=str)
-	parser.add_argument("-ny","--noise_y", default=0.5, type=float)
+	parser.add_argument("-ny","--noise_sy", default=1.0, type=float)
 	args = parser.parse_args()
+	print(args)
 
 	print('loading weights ...')
 	d = D.Load(args.path,True)
 	
 	print('training ...')
 	d.compile()
-	data = NoizyData(y_scaler=args.noise_y)
+	data = NoizyData(args.noise_sy)
 	d.train(data,epochs=args.epochs,batch_size=args.batch_size)
 
 	print('saving ...')
