@@ -9,6 +9,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrossGAN", "CrossGAN\CrossG
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DCGAN", "DCGAN\DCGAN.pyproj", "{94A5BBB7-9D61-4A3F-BC62-E50D8F4C4048}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CCycleGAN", "CCycleGAN\CCycleGAN.pyproj", "{F5C4018A-9848-43C1-BAA0-55EB461CC766}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,8 @@ Global
 		{52A2531A-B0A5-418A-90F1-D830ACDB82D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94A5BBB7-9D61-4A3F-BC62-E50D8F4C4048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{94A5BBB7-9D61-4A3F-BC62-E50D8F4C4048}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5C4018A-9848-43C1-BAA0-55EB461CC766}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5C4018A-9848-43C1-BAA0-55EB461CC766}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
