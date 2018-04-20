@@ -1,16 +1,15 @@
 import cv2
 import numpy as np
 import glob
+import os
+
 
 test_folder = 'x2photo/test'
 train_folder = 'x2photo/train'
 labels = ['cezanne','monet','photo','ukiyoi','vangogh']
 
 I = np.eye(len(labels))
-label_one_hot = { name:I[index] for index,name in enumerate(label_name) }
-
-def one_hot(label_name):
-	return label_one_hot[label_name]
+label_to_one_hot = { name:I[index] for index,name in enumerate(label_name) }
 
 def read_images(fileNames):
 	for file in fileNames:
@@ -33,7 +32,5 @@ def load_collection(root):
 		D[name] = list(normalize(im) for im in imgs)
 	return D
 
-train = load_collection(train_folder)
-test = load_collection(test_folder)
-
-
+_train = load_collection(train_folder)
+_test = load_collection(test_folder)
