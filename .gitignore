@@ -111,3 +111,4 @@ test/
 *.jpg
 *.png
 x2photo/
+DCGAN/results/
