@@ -58,6 +58,7 @@ if __name__ == '__main__':
 	parser.add_argument("-b","--batch_size", default=128, type=int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)
 	parser.add_argument("-dp","--discriminator_path", default="D.h5", type=str)
+	parser.add_argument("-plot","--plot", action='store_true')
 	args = parser.parse_args()
 	print(args)
 
@@ -67,6 +68,12 @@ if __name__ == '__main__':
 	
 	g = new_G(input_shape)
 	
+	if args.plot:
+		from keras.utils import plot_model
+		plot_model(g, to_file='G.png',show_shapes=True)
+		raise SystemExit	
+
+
 	print('loading G ... ',end='')
 	try: g.load_weights(args.path)
 	except: print('failed')

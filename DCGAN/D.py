@@ -63,17 +63,17 @@ def new_D():
 	from keras.models import Sequential
 	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
 	model = Sequential(name='D-cifar10',
-		layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=(32,32,3)),
-			Conv2D(32, kernel_size=3, strides=1, activation='relu'),
-			Conv2D(48, kernel_size=3, strides=1, activation='relu'),# as-is, expand
-			Conv2D(48, kernel_size=3, strides=1, activation='relu'),
-			Conv2D(64, kernel_size=3, strides=2, activation='relu'),# downsample, reduce
-			Conv2D(64, kernel_size=3, strides=1, activation='relu'),
-			Conv2D(96, kernel_size=3, strides=1, activation='relu'),# as-is, expand
-			Conv2D(96, kernel_size=3, strides=1, activation='relu'),
-			Conv2D(128,kernel_size=3, strides=2, activation='relu'),# downsample, reduce
-			Conv2D(128,kernel_size=3, strides=1, activation='relu'),
-			Conv2D(256,kernel_size=3, strides=2, activation='relu'),# downsample, as-is
+		layers=[Conv2D(32, kernel_size=3, padding='same', strides=1, activation='relu',input_shape=(32,32,3)),
+			Conv2D(32, kernel_size=3, padding='same', strides=1, activation='relu'),
+			Conv2D(48, kernel_size=3, padding='same', strides=1, activation='relu'),# as-is, expand
+			Conv2D(48, kernel_size=3, padding='same', strides=1, activation='relu'),
+			Conv2D(64, kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, reduce
+			Conv2D(64, kernel_size=3, padding='same', strides=1, activation='relu'),
+			Conv2D(96, kernel_size=3, padding='same', strides=1, activation='relu'),# as-is, expand
+			Conv2D(96, kernel_size=3, padding='same', strides=1, activation='relu'),
+			Conv2D(128,kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, reduce
+			Conv2D(128,kernel_size=3, padding='same', strides=1, activation='relu'),
+			Conv2D(256,kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, as-is
 			Flatten(),
 			Dense(1024, activation='relu'),
 			Dense(1024, activation='relu'),
@@ -99,15 +99,24 @@ if __name__ == "__main__":
 	parser.add_argument("-b","--batch_size", default=128, type=int)
 	parser.add_argument("-p","--path", default="D.h5", type=str)
 	parser.add_argument("-ny","--noise_sy", default=1.0, type=float)
+	parser.add_argument("-plot", "--plot", action='store_true')
 	args = parser.parse_args()
 	print(args)
-
+	
+	
 	D = new_D()
+
+	if args.plot:
+		from keras.utils import plot_model
+		plot_model(D, to_file='D.png',show_shapes=True)
+		raise SystemExit
+	
 	print('loading weights ... ',end='')
 	try: D.load_weights(args.path)
 	except: print('failed')
 	else: print('success')
 	
+
 	print('loading data ... ', end='')
 	data = NoizyData(args.noise_sy)
 	print('finish')
