@@ -6,7 +6,7 @@ class NoizyData:
 	'''noizy mnist data'''
 	def __init__(self,y_factor=1.0):
 		
-		(x,y),(tx,ty) = self.load_mnist()
+		(x,y),(tx,ty) = self.load_data()
 		self.x = x
 		self.y = y
 		self.tx = tx
@@ -43,73 +43,56 @@ class NoizyData:
 
 	@staticmethod
 	def transform(x):
-		return x.astype('float32').reshape(-1,28,28,1) / 255
+		return x.astype('float32').reshape(-1,32,32,3) / 255
 	
 	@staticmethod
 	def transform_inv(x):
 		return x * 255
 
 	@staticmethod
-	def load_mnist():
-		from keras.datasets import mnist
-		(x_train, y_train), (x_test, y_test) = mnist.load_data()
+	def load_data():
+		from keras.datasets import cifar10
+		(x_train, y_train), (x_test, y_test) = cifar10.load_data()
 		x_train = NoizyData.transform(x_train)
 		x_test = NoizyData.transform(x_test)
 		y_train = keras.utils.to_categorical(y_train, 10)
 		y_test = keras.utils.to_categorical(y_test, 10)
 		return (x_train,y_train),(x_test,y_test)
 
+def new_D(input_shape):		
+	from keras.models import Sequential
+	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
+	model = Sequential(name='D-cifar10',
+		layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=(32,32,3)),
+			Conv2D(32, kernel_size=3, strides=1, activation='relu'),
+			Conv2D(48, kernel_size=3, strides=1, activation='relu'),# as-is, expand
+			Conv2D(48, kernel_size=3, strides=1, activation='relu'),
+			Conv2D(64, kernel_size=3, strides=2, activation='relu'),# downsample, reduce
+			Conv2D(64, kernel_size=3, strides=1, activation='relu'),
+			Conv2D(96, kernel_size=3, strides=1, activation='relu'),# as-is, expand
+			Conv2D(96, kernel_size=3, strides=1, activation='relu'),
+			Conv2D(128,kernel_size=3, strides=2, activation='relu'),# downsample, reduce
+			Conv2D(128,kernel_size=3, strides=1, activation='relu'),
+			Conv2D(256,kernel_size=3, strides=2, activation='relu'),# downsample, as-is
+			Flatten(),
+			Dense(1024, activation='relu'),
+			Dense(1024, activation='relu'),
+			Dense(1024, activation='relu'),
+			Dense(10)])
+	return model
 
-class D:
-	def __init__(self):
-		self.model = self.new_classifier()
-
-	@staticmethod
-	def new_classifier():
-		from keras.models import Sequential
-		from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
-		model = Sequential(name='mnist_classifier',
-			layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=(28,28,1)),
-				Conv2D(64, kernel_size=3, strides=2, activation='relu'),
-				Dropout(0.25),
-				Flatten(),
-				Dense(128, activation='relu'),
-				Dropout(0.5),
-				Dense(10)])
-		return model
-	
-	@classmethod
-	def Load(cls,path=None,or_new=False):
-		inst = cls()
-		if path is None:
-			path = cls.default_path
-		try:
-			inst.load_weights(path)
-		except:
-			print('load weight fail')
-			if not or_new:
-				raise
-		return inst
-
-	def save_weights(self,path=None):
-		if path is None:
-			path = D.default_path
-		self.model.save_weights(path)
-	def load_weights(self,path):
-		self.model.load_weights(path)
-
-	def compile(self,optimizer='adadelta', loss='mse' ,metrics=['accuracy'],*args):
+def compile(self,optimizer='adadelta', loss='mse' ,metrics=['accuracy'],*args):
 		self.model.compile(optimizer=optimizer, loss=loss, metrics=metrics,*args)
 
-	def train(self,data,epochs=200,batch_size=128):
+def train(self,data,epochs=200,batch_size=128):
 
-		self.model.fit_generator(
-			data.train_generator(batch_size),
-			steps_per_epoch=data.x.shape[0]//batch_size,
-			epochs=epochs,
-			validation_data=data.test(),
-			shuffle=False # shuffle inside generator
-			)
+	self.model.fit_generator(
+		data.train_generator(batch_size),
+		steps_per_epoch=data.x.shape[0]//batch_size,
+		epochs=epochs,
+		validation_data=data.test(),
+		shuffle=False # shuffle inside generator
+		)
 
 if __name__ == "__main__":
 
