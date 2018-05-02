@@ -59,7 +59,7 @@ class NoizyData:
 		y_test = keras.utils.to_categorical(y_test, 10)
 		return (x_train,y_train),(x_test,y_test)
 
-def new_D(input_shape):		
+def new_D():
 	from keras.models import Sequential
 	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
 	model = Sequential(name='D-cifar10',
@@ -81,20 +81,17 @@ def new_D(input_shape):
 			Dense(10)])
 	return model
 
-def compile(self,optimizer='adadelta', loss='mse' ,metrics=['accuracy'],*args):
-		self.model.compile(optimizer=optimizer, loss=loss, metrics=metrics,*args)
-
 def train(self,data,epochs=200,batch_size=128):
 
-	self.model.fit_generator(
-		data.train_generator(batch_size),
-		steps_per_epoch=data.x.shape[0]//batch_size,
+	self.model.fit_generator(data.train_generator(batch_size),
+		steps_per_epoch=data.x.shape[0] // batch_size,
 		epochs=epochs,
 		validation_data=data.test(),
 		shuffle=False # shuffle inside generator
 		)
 
 if __name__ == "__main__":
+	print('CCDCGAN-cifar10-')
 
 	import argparse
 	parser = argparse.ArgumentParser()
@@ -105,13 +102,25 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 	print(args)
 
-	print('loading weights ...')
-	d = D.Load(args.path,True)
+	D = new_D()
+	print('loading weights ... ',end='')
+	try: D.load_weights(args.path)
+	except: print('failed')
+	else: print('success')
 	
-	print('training ...')
-	d.compile()
+	print('loading data ... ', end='')
 	data = NoizyData(args.noise_sy)
-	d.train(data,epochs=args.epochs,batch_size=args.batch_size)
+	print('finish')
+
+	print('training ...')
+	D.compile('adadelta','mse',['accuracy'])
+	D.fit_generator(
+		data.train_generator(args.batch_size),
+		steps_per_epoch = data.x.shape[0] // args.batch_size,
+		epochs = args.epochs,
+		validation_data = data.test(),
+		shuffle=False # shuffled inside generator
+		)
 
 	print('saving ...')
-	d.save_weights(args.path)
+	D.save_weights(args.path)
