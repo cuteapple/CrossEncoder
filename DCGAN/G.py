@@ -3,24 +3,40 @@ import numpy as np
 from keras.models import Sequential,Model
 from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
 from keras_contrib.layers.normalization import InstanceNormalization 
-from D import D
+from D import new_D
 
 
 def new_G(input_shape):
 	return Sequential(name='G',
-		layers=[Dense(128 * 7 * 7, activation="relu", input_shape=input_shape),
-			Reshape((7, 7, 128)),
+		layers=[#input_shape
+
+			Dense(128 * 4 * 4, activation="relu", input_shape=input_shape),# 4*4*128
+			
+			Reshape((4, 4, 128)),# 4 4 128
+			Conv2D(128, kernel_size=7, activation='relu', padding="same"),
 			InstanceNormalization(),
-			UpSampling2D(),
-			Conv2D(128, kernel_size=3, padding="same"),
-			Activation("relu"),
+
+			UpSampling2D(),# 8 8 128
+			Conv2D(96, kernel_size=3, activation='relu', padding="same"),
 			InstanceNormalization(),
-			UpSampling2D(),
-			Conv2D(64, kernel_size=3, padding="same"),
-			Activation("relu"),
+			Conv2D(96, kernel_size=3, activation='relu', padding="same"),
 			InstanceNormalization(),
-			Conv2D(1, kernel_size=3, padding="same"),
-			Activation("sigmoid")])
+
+			UpSampling2D(), # 16 16 96
+			Conv2D(64, kernel_size=3, activation='relu', padding="same"),
+			InstanceNormalization(),
+			Conv2D(64, kernel_size=3, activation='relu', padding="same"),
+			InstanceNormalization(),
+
+			UpSampling2D(), # 32 32 64
+			Conv2D(64, kernel_size=3, activation='relu', padding="same"),
+			InstanceNormalization(),
+			Conv2D(64, kernel_size=3, activation='relu', padding="same"),
+			InstanceNormalization(),
+			Conv2D(64, kernel_size=3, activation='relu', padding="same"),
+			InstanceNormalization(),
+			Conv2D(3, kernel_size=3, activation='relu', padding="same")
+			])
 
 
 def z(batch_size,length):
@@ -33,6 +49,7 @@ def z(batch_size,length):
 		yield g()
 
 if __name__ == '__main__':
+	print('CCDCGAN-cifar10-v7.G.1')
 	
 	import argparse
 	parser = argparse.ArgumentParser()
@@ -44,21 +61,23 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	print(args)
 
-	output_shape = (28,28,1)
+	output_shape = (32,32,3)
 	z_len = 20
 	input_shape = (z_len,)
 	
-	print('loading G ...')
 	g = new_G(input_shape)
-	try: g.load_weights(args.path)
-	except: print('load weight for G failed')
 	
-	print('loading D ...')
-	d = D.Load(args.discriminator_path)
-	d = d.model
+	print('loading G ... ',end='')
+	try: g.load_weights(args.path)
+	except: print('failed')
+	else: print('success')
+	
+	print('loading D ... ')
+	d = new_D()
+	d.load_weights(args.discriminator_path) # this need success
 	d.trainable = False
 
-	print('linking G & D ...')
+	print('linking G & D ... ')
 	input = Input(input_shape)
 	m = Model(input,d(g(input)))
 	m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'])
