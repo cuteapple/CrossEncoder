@@ -96,7 +96,7 @@ if __name__ == "__main__":
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-e","--epochs", default=200, type=int)
-	parser.add_argument("-b","--batch_size", default=128, type=int)
+	parser.add_argument("-b","--batch_size", default=256, type=int)
 	parser.add_argument("-p","--path", default="D.h5", type=str)
 	parser.add_argument("-ny","--noise_sy", default=1.0, type=float)
 	parser.add_argument("-plot", "--plot", action='store_true')
