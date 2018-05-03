@@ -61,24 +61,24 @@ class NoizyData:
 
 def new_D():
 	from keras.models import Sequential
-	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
+	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input,BatchNormalization
 	model = Sequential(name='D-cifar10',
 		layers=[Conv2D(32, kernel_size=3, padding='same', strides=1, activation='relu',input_shape=(32,32,3)),
-			Conv2D(32, kernel_size=3, padding='same', strides=1, activation='relu'),
-			Conv2D(48, kernel_size=3, padding='same', strides=1, activation='relu'),# as-is, expand
-			Conv2D(48, kernel_size=3, padding='same', strides=1, activation='relu'),
-			Conv2D(64, kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, reduce
-			Conv2D(64, kernel_size=3, padding='same', strides=1, activation='relu'),
-			Conv2D(96, kernel_size=3, padding='same', strides=1, activation='relu'),# as-is, expand
-			Conv2D(96, kernel_size=3, padding='same', strides=1, activation='relu'),
-			Conv2D(128,kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, reduce
-			Conv2D(128,kernel_size=3, padding='same', strides=1, activation='relu'),
-			Conv2D(256,kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, as-is
+			BatchNormalization(),Conv2D(32, kernel_size=3, padding='same', strides=1, activation='relu'),
+			BatchNormalization(),Conv2D(48, kernel_size=3, padding='same', strides=1, activation='relu'),# as-is, expand
+			BatchNormalization(),Conv2D(48, kernel_size=3, padding='same', strides=1, activation='relu'),
+			BatchNormalization(),Conv2D(64, kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, reduce
+			BatchNormalization(),Conv2D(64, kernel_size=3, padding='same', strides=1, activation='relu'),
+			BatchNormalization(),Conv2D(96, kernel_size=3, padding='same', strides=1, activation='relu'),# as-is, expand
+			BatchNormalization(),Conv2D(96, kernel_size=3, padding='same', strides=1, activation='relu'),
+			BatchNormalization(),Conv2D(128,kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, reduce
+			BatchNormalization(),Conv2D(128,kernel_size=3, padding='same', strides=1, activation='relu'),
+			BatchNormalization(),Conv2D(256,kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, as-is
 			Flatten(),
-			Dense(1024, activation='relu'),
-			Dense(1024, activation='relu'),
-			Dense(1024, activation='relu'),
-			Dense(10)])
+			BatchNormalization(),Dense(1024, activation='relu'),
+			BatchNormalization(),Dense(1024, activation='relu'),
+			BatchNormalization(),Dense(1024, activation='relu'),
+			BatchNormalization(),Dense(10)])
 	return model
 
 def train(self,data,epochs=200,batch_size=128):
