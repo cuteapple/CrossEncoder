@@ -91,7 +91,7 @@ def train(self,data,epochs=200,batch_size=128):
 		)
 
 if __name__ == "__main__":
-	print('CCDCGAN-cifar10-v7.D.1')
+	print('CCDCGAN-cifar10-v7.D.2')
 
 	import argparse
 	parser = argparse.ArgumentParser()
