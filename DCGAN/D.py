@@ -1,6 +1,7 @@
 import keras
 import numpy as np
 
+shape = (28,28,1)
 
 class NoizyData:
 	'''noizy mnist data'''
@@ -43,7 +44,7 @@ class NoizyData:
 
 	@staticmethod
 	def transform(x):
-		return x.astype('float32').reshape(-1,32,32,3) / 255
+		return x.astype('float32').reshape(-1,*shape) / 255
 	
 	@staticmethod
 	def transform_inv(x):
@@ -51,8 +52,8 @@ class NoizyData:
 
 	@staticmethod
 	def load_data():
-		from keras.datasets import cifar10
-		(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+		from keras.datasets import mnist
+		(x_train, y_train), (x_test, y_test) = mnist.load_data()
 		x_train = NoizyData.transform(x_train)
 		x_test = NoizyData.transform(x_test)
 		y_train = keras.utils.to_categorical(y_train, 10)
@@ -63,7 +64,7 @@ def new_D():
 	from keras.models import Sequential
 	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input,BatchNormalization
 	model = Sequential(name='D-cifar10',
-		layers=[Conv2D(32, kernel_size=3, padding='same', strides=1, activation='relu',input_shape=(32,32,3)),
+		layers=[Conv2D(32, kernel_size=3, padding='same', strides=1, activation='relu',input_shape=shape),
 			BatchNormalization(),Conv2D(32, kernel_size=3, padding='same', strides=1, activation='relu'),
 			BatchNormalization(),Conv2D(48, kernel_size=3, padding='same', strides=1, activation='relu'),# as-is, expand
 			BatchNormalization(),Conv2D(48, kernel_size=3, padding='same', strides=1, activation='relu'),

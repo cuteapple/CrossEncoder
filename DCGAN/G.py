@@ -3,8 +3,7 @@ import numpy as np
 from keras.models import Sequential,Model
 from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
 from keras_contrib.layers.normalization import InstanceNormalization 
-from D import new_D
-
+from D import new_D, shape
 
 def new_G(input_shape):
 	return Sequential(name='G',
@@ -31,11 +30,11 @@ def new_G(input_shape):
 			UpSampling2D(), # 32 32 64
 			Conv2D(64, kernel_size=3, activation='relu', padding="same"),
 			InstanceNormalization(),
-			Conv2D(64, kernel_size=3, activation='relu', padding="same"),
+			Conv2D(64, kernel_size=3, activation='relu'),
 			InstanceNormalization(),
-			Conv2D(64, kernel_size=3, activation='relu', padding="same"),
+			Conv2D(64, kernel_size=3, activation='relu'),
 			InstanceNormalization(),
-			Conv2D(3, kernel_size=3, activation='relu', padding="same")
+			Conv2D(shape[-1], kernel_size=3, activation='relu', padding="same")
 			])
 
 
@@ -62,7 +61,6 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	print(args)
 
-	output_shape = (32,32,3)
 	z_len = 20
 	input_shape = (z_len,)
 	
