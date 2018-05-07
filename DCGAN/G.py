@@ -9,27 +9,21 @@ def new_G(input_shape):
 	return Sequential(name='G',
 		layers=[#input_shape
 
-			Dense(128 * 4 * 4, activation="relu", input_shape=input_shape),# 4*4*128
+			Dense(128*4*4 , activation="relu", input_shape=input_shape),
 			
-			Reshape((4, 4, 128)),# 4 4 128
+			Reshape((4, 4, 128)),
 			Conv2D(128, kernel_size=7, activation='relu', padding="same"),
 			InstanceNormalization(),
 
-			UpSampling2D(),# 8 8 128
-			Conv2D(96, kernel_size=3, activation='relu', padding="same"),
-			InstanceNormalization(),
+			UpSampling2D(), # 8 8
 			Conv2D(96, kernel_size=3, activation='relu', padding="same"),
 			InstanceNormalization(),
 
-			UpSampling2D(), # 16 16 96
-			Conv2D(64, kernel_size=3, activation='relu', padding="same"),
-			InstanceNormalization(),
+			UpSampling2D(), # 16 16
 			Conv2D(64, kernel_size=3, activation='relu', padding="same"),
 			InstanceNormalization(),
 
-			UpSampling2D(), # 32 32 64
-			Conv2D(64, kernel_size=3, activation='relu', padding="same"),
-			InstanceNormalization(),
+			UpSampling2D(), # 32 32
 			Conv2D(64, kernel_size=3, activation='relu'),
 			InstanceNormalization(),
 			Conv2D(64, kernel_size=3, activation='relu'),
@@ -43,12 +37,11 @@ def z(batch_size,length):
 		answer = np.eye(10)[np.random.choice(10,batch_size)]
 		z = np.random.normal(size=(batch_size,length))
 		z[:,0:10] = answer
-		return z,answer
+		return z,[answer,np.zeros(len(answer))]
 	while True:
 		yield g()
 
 if __name__ == '__main__':
-	print('CCDCGAN-cifar10-v7.G.1')
 	
 	import argparse
 	parser = argparse.ArgumentParser()

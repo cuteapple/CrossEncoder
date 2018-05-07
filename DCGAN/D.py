@@ -10,8 +10,6 @@ class NoizyData:
 		(x,y),(tx,ty) = self.load_data()
 		self.x = x
 		self.y = y
-		self.tx = tx
-		self.ty = ty, np.zeros(ty.shape[0])
 		self.choicepool = np.arange(self.x.shape[0])
 
 	def train_generator(self,size):
@@ -76,7 +74,6 @@ def new_D():
 	return Model([x],[classify,real],name='D')
 
 if __name__ == "__main__":
-	print('CCDCGAN-mnist-9')
 
 	import argparse
 	parser = argparse.ArgumentParser()
