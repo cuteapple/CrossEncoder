@@ -71,7 +71,7 @@ def new_D():
 	
 	x = Input(shape)
 	s = model(x)
-	classify = Dense(10,name = 'class')(s)
+	classify = Dense(10,name = 'class',activation='softmax')(s)
 	real = Dense(1,name = 'real')(s)
 	return Model([x],[classify,real],name='D')
 
@@ -106,7 +106,12 @@ if __name__ == "__main__":
 	print('finish')
 
 	print('training ...')
-	D.compile('rmsprop','mse',loss_weights=[1,1],metrics=['accuracy'])
+
+	D.compile(optimizer = 'rmsprop',
+		   loss = ['categorical_crossentropy','mse'],
+		   loss_weights=[1,1],
+		   metrics=['accuracy'])
+
 	D.fit_generator(data.train_generator(args.batch_size),
 		steps_per_epoch = data.x.shape[0] // args.batch_size if args.step == 0 else args.step,
 		epochs = args.epochs,
