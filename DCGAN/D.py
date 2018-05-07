@@ -5,16 +5,13 @@ shape = (28,28,1)
 
 class NoizyData:
 	'''noizy mnist data'''
-	def __init__(self,y_factor=1.0):
+	def __init__(self):
 		
 		(x,y),(tx,ty) = self.load_data()
 		self.x = x
 		self.y = y
 		self.tx = tx
-		self.ty = ty
-		self.sy = y_factor
-		self.noise_mean = 0.0
-		self.noise_sigma = 1.0
+		self.ty = ty, np.zeros(ty.shape[0])
 		self.choicepool = np.arange(self.x.shape[0])
 
 	def train_generator(self,size):
@@ -27,20 +24,15 @@ class NoizyData:
 		y = self.y[choice]
 
 		scale = np.random.uniform(size=size)
-		
+
 		dx = np.random.normal(size=x.shape)
 		dx = dx.reshape((size,-1)) * scale[:,None]
 		dx = dx.reshape(x.shape)
-		
-		sy = (1 - scale)[:,None] * self.sy
-
 		x = np.clip(x + dx,0,1)
-		y = y * sy
 
-		return x,y
+		r = scale #+ np.random.normal(0, .1, scale.shape)
 
-	def test(self):
-		return self.tx,self.ty
+		return x,[y,r]
 
 	@staticmethod
 	def transform(x):
@@ -61,49 +53,40 @@ class NoizyData:
 		return (x_train,y_train),(x_test,y_test)
 
 def new_D():
-	from keras.models import Sequential
-	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input,BatchNormalization
-	model = Sequential(name='D-cifar10',
+	from keras.models import Sequential,Model
+	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
+	
+	model = Sequential(name='d-pre',
 		layers=[Conv2D(32, kernel_size=3, padding='same', strides=1, activation='relu',input_shape=shape),
-			BatchNormalization(),Conv2D(32, kernel_size=3, padding='same', strides=1, activation='relu'),
-			BatchNormalization(),Conv2D(48, kernel_size=3, padding='same', strides=1, activation='relu'),# as-is, expand
-			BatchNormalization(),Conv2D(48, kernel_size=3, padding='same', strides=1, activation='relu'),
-			BatchNormalization(),Conv2D(64, kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, reduce
-			BatchNormalization(),Conv2D(64, kernel_size=3, padding='same', strides=1, activation='relu'),
-			BatchNormalization(),Conv2D(96, kernel_size=3, padding='same', strides=1, activation='relu'),# as-is, expand
-			BatchNormalization(),Conv2D(96, kernel_size=3, padding='same', strides=1, activation='relu'),
-			BatchNormalization(),Conv2D(128,kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, reduce
-			BatchNormalization(),Conv2D(128,kernel_size=3, padding='same', strides=1, activation='relu'),
-			BatchNormalization(),Conv2D(256,kernel_size=3, padding='same', strides=2, activation='relu'),# downsample, as-is
+			Dropout(.5),
+			Conv2D(48, kernel_size=3, padding='same', strides=2, activation='relu',input_shape=shape),
+			Dropout(.5),
+			Conv2D(48, kernel_size=3, padding='same', strides=1, activation='relu',input_shape=shape),
+			Dropout(.5),
+			Conv2D(64, kernel_size=3, padding='same', strides=2, activation='relu',input_shape=shape),
+			Dropout(.5),
 			Flatten(),
-			BatchNormalization(),Dense(1024, activation='relu'),
-			BatchNormalization(),Dense(1024, activation='relu'),
-			BatchNormalization(),Dense(1024, activation='relu'),
-			BatchNormalization(),Dense(10)])
-	return model
-
-def train(self,data,epochs=200,batch_size=128):
-
-	self.model.fit_generator(data.train_generator(batch_size),
-		steps_per_epoch=data.x.shape[0] // batch_size,
-		epochs=epochs,
-		validation_data=data.test(),
-		shuffle=False # shuffle inside generator
-		)
+			Dense(128, activation='relu')
+			])
+	
+	x = Input(shape)
+	s = model(x)
+	classify = Dense(10,name = 'class')(s)
+	real = Dense(1,name = 'real')(s)
+	return Model([x],[classify,real],name='D')
 
 if __name__ == "__main__":
-	print('CCDCGAN-cifar10-v7.D.2')
+	print('CCDCGAN-mnist-9')
 
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-e","--epochs", default=200, type=int)
 	parser.add_argument("-b","--batch_size", default=256, type=int)
+	parser.add_argument("-s","--step", default=0, type=int)
 	parser.add_argument("-p","--path", default="D.h5", type=str)
-	parser.add_argument("-ny","--noise_sy", default=1.0, type=float)
 	parser.add_argument("-plot", "--plot", action='store_true')
 	args = parser.parse_args()
 	print(args)
-	
 	
 	D = new_D()
 
@@ -119,16 +102,14 @@ if __name__ == "__main__":
 	
 
 	print('loading data ... ', end='')
-	data = NoizyData(args.noise_sy)
+	data = NoizyData()
 	print('finish')
 
 	print('training ...')
-	D.compile('adadelta','mse',['accuracy'])
-	D.fit_generator(
-		data.train_generator(args.batch_size),
-		steps_per_epoch = data.x.shape[0] // args.batch_size,
+	D.compile('rmsprop','mse',loss_weights=[1,1],metrics=['accuracy'])
+	D.fit_generator(data.train_generator(args.batch_size),
+		steps_per_epoch = data.x.shape[0] // args.batch_size if args.step == 0 else args.step,
 		epochs = args.epochs,
-		validation_data = data.test(),
 		shuffle=False # shuffled inside generator
 		)
 
