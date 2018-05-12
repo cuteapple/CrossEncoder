@@ -4,7 +4,7 @@ import numpy as np
 
 class NoizyData:
 	'''noizy mnist data'''
-	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(7,7), y_scaler=0.5):
+	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(7,7), y_scaler=0.3):
 		noise_mean = 0.0
 
 		ax = noise_area[0]
@@ -13,7 +13,7 @@ class NoizyData:
 
 		
 		for i in range(len(x)):
-			noise = noise_scaler * np.random.normal(noise_mean, noise_sigma, size=(ax,ay))
+			noise = np.random.normal(noise_mean, noise_sigma, size=(ax,ay,1)) * noise_scaler
 			dx = np.random.randint(28 - 1 - ax)
 			dy = np.random.randint(28 - 1 - ay)
 			x[i, dx:dx + ax, dy:dy + ay] += noise
@@ -112,7 +112,8 @@ if __name__ == "__main__":
 	parser.add_argument("-e","--epochs", default=200, type=int)
 	parser.add_argument("-b","--batch_size", default=128, type=int)
 	parser.add_argument("-p","--path", default="D.h5", type=str)
-	parser.add_argument("-ny","--noise_y", default=0.5, type=float)
+	parser.add_argument("-ny","--noise_y", default=0.3, type=float)
+	parser.add_argument("-nx","--noise_sacler_x", default=0.5, type=float)
 	args = parser.parse_args()
 
 	print('loading weights ...')
@@ -120,7 +121,7 @@ if __name__ == "__main__":
 	
 	print('training ...')
 	d.compile()
-	data = NoizyData(y_scaler=args.noise_y)
+	data = NoizyData(y_scaler=args.noise_y, noise_scaler=args.noise_sacler_x)
 	d.train(data,epochs=args.epochs,batch_size=args.batch_size)
 
 	print('saving ...')
