@@ -4,15 +4,22 @@ import numpy as np
 
 class NoizyData:
 	'''noizy mnist data'''
-	def __init__(self, noise_sigma=1.0, noise_scaler=0.5, y_scaler=0.5):
+	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(7,7), y_scaler=0.5):
 		noise_mean = 0.0
 
+		ax = noise_area[0]
+		ay = noise_area[1]
 		(x,y),(tx,ty) = self.load_mnist()
 
-		noisy_x = x + noise_scaler * np.random.normal(noise_mean, noise_sigma, size=x.shape)
+		
+		for i in range(len(x)):
+			noise = noise_scaler * np.random.normal(noise_mean, noise_sigma, size=(ax,ay))
+			dx = np.random.randint(28 - 1 - ax)
+			dy = np.random.randint(28 - 1 - ay)
+			x[i, dx:dx + ax, dy:dy + ay] += noise
+					
+		noisy_x = np.clip(x,0.0,1.0)
 		noisy_y = y * y_scaler
-		noisy_x = np.clip(noisy_x,0.0,1.0)
-		noisy_y = noisy_y
 
 		self.x = np.concatenate((x,noisy_x), axis=0)
 		self.y = np.concatenate((y,noisy_y), axis=0)
