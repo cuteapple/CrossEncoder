@@ -1,3 +1,9 @@
+'''
+	
+	Problem is batch norm ? not good for G (maybe)
+
+'''
+
 import keras
 import numpy as np
 
