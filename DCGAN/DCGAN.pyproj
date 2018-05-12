@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{94a5bbb7-9d61-4a3f-bc62-e50d8f4c4048}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>D.py</StartupFile>
+    <StartupFile>sample_NoisyData.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -22,6 +22,9 @@
     <Compile Include="D.py" />
     <Compile Include="G.py" />
     <Compile Include="test_G.py" />
+    <Compile Include="sample_NoisyData.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
