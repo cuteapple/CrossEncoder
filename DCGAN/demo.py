@@ -48,22 +48,25 @@ else:
 
 init_models()
 
-Wcontrols = 'control'
+def window_trackbars(name='bars'):
+	name = 'bars'
+	cv2.namedWindow(name,cv2.WINDOW_NORMAL)
+
+	# create trackbars
+	for i in range(10):
+		steps = 100 # step of trackbar
+		def update_i(x,i=i):
+			z[i] = x / steps
+			global z_update
+			z_update = True
+			#print('set {} to {}'.format(i,z[i]))
+		cv2.createTrackbar(str(i),Wcontrols,int(z[i] * steps),steps, update_i)
+
+
 Wimg = 'result'
-cv2.namedWindow(Wcontrols,cv2.WINDOW_NORMAL)
 cv2.namedWindow(Wimg,cv2.WINDOW_AUTOSIZE)
 
 
-
-# create trackbars
-for i in range(10):
-	steps = 100 # step of trackbar
-	def update_i(x,i=i):
-		z[i] = x / steps
-		global z_update
-		z_update = True
-		#print('set {} to {}'.format(i,z[i]))
-	cv2.createTrackbar(str(i),Wcontrols,int(z[i] * steps),steps, update_i)
 
 
 import colorsys
