@@ -7,6 +7,7 @@ def nothing(x):
 update = True
 z_shape = (20,)
 z = np.random.normal(size=z_shape)
+z[:10]=0
 
 # Create a black image, a window
 #img = np.zeros((300,512,3), np.uint8)
@@ -32,11 +33,15 @@ g = G.new_G(z_shape)
 g.load_weights('G.h5')
 
 def predict():
+	global im
+	global update
+
 	if not update:
 		return
-	
-	global im
+	update = False
+	print('predict', z)
 	im = g.predict(z.reshape(1,*z_shape)).reshape(28,28,1)
+	im = cv2.resize(im,(280,280))
 
 while cv2.getWindowProperty(Wcontrols, 0) >= 0:
 	predict()
