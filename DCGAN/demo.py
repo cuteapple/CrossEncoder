@@ -1,22 +1,27 @@
 import cv2
 import numpy as np
 
+CONTROL_ONLY = False
 
-print('initializing ...')
-import G
-print('loading model ...')
 z_shape = (20,)
-g = G.new_G(z_shape)
-g.load_weights('G.h5')
+
+if not CONTROL_ONLY:
+	print('initializing ...')
+	import G
+	print('loading model ...')
+	g = G.new_G(z_shape)
+	g.load_weights('G.h5')
+
+	import D
+	d = D.D().model
+	d.load_weights('D.h5')
+
+
 z = np.random.normal(size=z_shape)
 z[:10] = 0
-
-import D
-d = D.D().model
-d.load_weights('D.h5')
-
 outG = np.zeros((280,280))
 outD = np.zeros(10)
+
 update = True
 def predict():
 	global outG
@@ -30,6 +35,12 @@ def predict():
 	outG = g.predict(z.reshape(1,*z_shape))[0]
 	outD = d.predict(outG.reshape(1,28,28,1))[0]
 	print('D',outD)
+
+if CONTROL_ONLY:
+	def predict():
+		global outD
+		outD = z
+		print('pass predict')
 
 Wcontrols = 'control'
 Wimg = 'result'
@@ -51,7 +62,7 @@ for i in range(10):
 
 import colorsys
 import random
-hcolors = [colorsys.hsv_to_rgb(r / 10,1,1) for r in range(20)]
+hcolors = np.array([colorsys.hsv_to_rgb(r / 10,1,1) for r in range(20)])
 frame = np.zeros((280 + 100,280,3))
 
 im_canvas = frame[:280]
@@ -70,17 +81,19 @@ def draw_z_img():
 
 	#draw input z
 	for pos,color,value in zip(range(len(z)),hcolors,z):
-		x = int(pos * delta)
+		x1 = int(pos * delta)
+		x2 = x1 + int(delta)
+		x1 += 1
+		x2 -= 1
 		height = int(h * value)
-		z_canvas[h - height:h,x + 1:int(x + delta)] = color
-		z_canvas[h - height:h,x + 1:int(x + delta)] = color
-	
+		z_canvas[h - height:h, x1:x2] = color
+
 	#draw out D (D(G(z)))
-	for pos,color,value in zip(range(len(z)),hcolors[5:],outD):
+	for pos,color,value in zip(range(len(z)),hcolors,outD):
 		x = int(pos * delta)
 		height = int(h * value)
 		padding = int(delta / 4)
-		z_canvas[h - height:h, x + padding:int(x + delta - padding)] = color
+		z_canvas[h - height:h, x + padding:int(x + delta - padding)] = color*.5
 
 while cv2.getWindowProperty(Wcontrols, 0) >= 0:
 	predict()
