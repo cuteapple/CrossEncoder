@@ -12,6 +12,7 @@ z_class[:] = 0
 z_noise = np.random.normal(size = z_noise.shape)
 z_update = True
 
+
 outG = np.zeros((28,28))
 outD = np.zeros(10)
 
@@ -48,9 +49,9 @@ else:
 
 init_models()
 
-def window_trackbars(name='bars'):
-	name = 'bars'
-	cv2.namedWindow(name,cv2.WINDOW_NORMAL)
+class window_trackbars:
+	def __init__(self,name='bars'):
+	cv2.namedWindow(name,cv2.WINDOW_NORMAL) # autosize not work (too small)
 
 	# create trackbars
 	for i in range(10):
@@ -59,23 +60,19 @@ def window_trackbars(name='bars'):
 			z[i] = x / steps
 			global z_update
 			z_update = True
-			#print('set {} to {}'.format(i,z[i]))
 		cv2.createTrackbar(str(i),Wcontrols,int(z[i] * steps),steps, update_i)
 
+	return name
 
-Wimg = 'result'
-cv2.namedWindow(Wimg,cv2.WINDOW_AUTOSIZE)
+def window_result(name='result'):
+	cv2.namedWindow(Wimg,cv2.WINDOW_AUTOSIZE)
 
+	import colorsys, random
+	hcolors = np.array([colorsys.hsv_to_rgb(r / 10,1,1) for r in range(20)])
+	frame = np.zeros((280 + 100,280,3))
 
-
-
-import colorsys
-import random
-hcolors = np.array([colorsys.hsv_to_rgb(r / 10,1,1) for r in range(20)])
-frame = np.zeros((280 + 100,280,3))
-
-im_canvas = frame[:280]
-z_canvas = frame[280:]
+	im_canvas = frame[:280]
+	z_canvas = frame[280:]
 
 def draw_img():
 	im = cv2.resize(outG,(im_canvas.shape[0],im_canvas.shape[1]),interpolation=cv2.INTER_NEAREST)
