@@ -69,7 +69,7 @@ im_canvas = frame[:280]
 z_canvas = frame[280:]
 
 def draw_img():
-	im = cv2.resize(outG,(im_canvas.shape[0],im_canvas.shape[1]))
+	im = cv2.resize(outG,(im_canvas.shape[0],im_canvas.shape[1]),interpolation=cv2.INTER_NEAREST)
 	im_canvas[:,:,0] = im
 	im_canvas[:,:,1] = im
 	im_canvas[:,:,2] = im
@@ -93,8 +93,7 @@ def draw_z_img():
 		x = int(pos * delta)
 		height = int(h * value)
 		padding = int(delta / 4)
-		z_canvas[h - height:h, x + padding:int(x + delta - padding)] = color*.5
-
+		z_canvas[h - height:h, x + padding:int(x + delta - padding)] = color * .5
 while cv2.getWindowProperty(Wcontrols, 0) >= 0:
 	predict()
 	draw_img()
