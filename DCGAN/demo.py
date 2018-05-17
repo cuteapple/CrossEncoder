@@ -3,27 +3,33 @@ import numpy as np
 
 CONTROL_ONLY = False
 
-z_shape = (20,)
-
-z = np.random.normal(size=z_shape)
+z = np.random.normal(size=(20,))
 z_class = z[:10]
 z_noise = z[10:]
 z_class[:] = 0
 z_noise = np.random.normal(size = z_noise.shape)
 z_update = True
 
+def setz(i,value):
+	'''set z and update z_update'''
+	z_class[i] = value
+	global z_update
+	z_update = True
 
 outG = np.zeros((28,28))
 outD = np.zeros(10)
 
 
+
+
 if not CONTROL_ONLY:
 	def init_models():
 		print('initializing ...')
-		import G,D
+		import G
+		import D
 
 		print('loading model ...')
-		g = G.new_G(z_shape)
+		g = G.new_G(z.shape)
 		g.load_weights('G.h5')
 
 		d = D.D().model
@@ -35,82 +41,89 @@ if not CONTROL_ONLY:
 			global outD
 			global z_update
 			print('predict', z)
-			outG = g.predict(z.reshape(1,*z_shape))[0]
+			outG = g.predict(z.reshape(1,*z.shape))[0]
 			outD = d.predict(outG.reshape(1,28,28,1))[0]
 			print('D',outD)
 else:
 	def init_models():
-		print('pass init models')
+		print('no model mode')
 		global predict
 		def predict():
 			global outD
 			outD = z_class
-			print('no model loaded')
 
 init_models()
 
 class window_trackbars:
 	def __init__(self,name='bars'):
-	cv2.namedWindow(name,cv2.WINDOW_NORMAL) # autosize not work (too small)
+		self.name = name
+		cv2.namedWindow(name,cv2.WINDOW_NORMAL) # autosize not work (too small)
+		steps = 100
 
-	# create trackbars
-	for i in range(10):
-		steps = 100 # step of trackbar
-		def update_i(x,i=i):
-			z[i] = x / steps
-			global z_update
-			z_update = True
-		cv2.createTrackbar(str(i),Wcontrols,int(z[i] * steps),steps, update_i)
+		for i in range(len(z_class)):
+			cv2.createTrackbar(str(i), self.name, int(z_class[i] * steps), steps, lambda x,i=i: setz(i,x / steps))
 
-	return name
-
-def window_result(name='result'):
-	cv2.namedWindow(Wimg,cv2.WINDOW_AUTOSIZE)
-
-	import colorsys, random
-	hcolors = np.array([colorsys.hsv_to_rgb(r / 10,1,1) for r in range(20)])
-	frame = np.zeros((280 + 100,280,3))
-
-	im_canvas = frame[:280]
-	z_canvas = frame[280:]
-
-def draw_img():
-	im = cv2.resize(outG,(im_canvas.shape[0],im_canvas.shape[1]),interpolation=cv2.INTER_NEAREST)
-	im_canvas[:,:,0] = im
-	im_canvas[:,:,1] = im
-	im_canvas[:,:,2] = im
-
-def draw_z_img():
-	z_canvas[:] = (.2,.2,.2)
-	h,w,_ = z_canvas.shape
-	delta = w / len(z)
-
-	#draw input z
-	for pos,color,value in zip(range(len(z)),hcolors,z):
-		x1 = int(pos * delta)
-		x2 = x1 + int(delta)
-		x1 += 1
-		x2 -= 1
-		height = int(h * value)
-		z_canvas[h - height:h, x1:x2] = color
-
-	#draw out D (D(G(z)))
-	for pos,color,value in zip(range(len(outD)),hcolors,outD):
-		x = int(pos * delta)
-		height = int(h * value)
-		padding = int(delta / 4)
-		z_canvas[h - height:h, x + padding:int(x + delta - padding)] = color * .5
-
-	
-	#draw text
-	for i in range(10):
-		x1 = int(i * delta)
-		x2 = x1 + int(delta)
-		x1 += 1
-		#print(x1)
-		cv2.putText(z_canvas,str(i),(x1,h - 5),cv2.FONT_HERSHEY_COMPLEX_SMALL,0.5,(1,1,1),1,cv2.FILLED,False)
+	def update(self):
+		for i in range(len(z_class)):
+			cv2.setTrackbarPos(str(i),self.name,z_class[i])
 
 
+class window_result:
+	def __init__(self, name='result'):
+		self.name = name
+		cv2.namedWindow(name,cv2.WINDOW_AUTOSIZE)
+
+		import colorsys
+		import random
+		
+		self.zcolors = np.array([colorsys.hsv_to_rgb(r / 10,1,1) for r in range(20)])
+		self.frame = np.zeros((280 + 100,280,3))
+
+		self.canvas_img = self.frame[:280]
+		self.canvas_z = self.frame[280:]
+
+	def render(self):
+		self.draw_img()
+		self.draw_z_img()
+		cv2.imshow(self.name,self.frame)
+
+	def alive(self):
+		return cv2.getWindowProperty(self.name, 0) >= 0
+
+	def draw_img(self):
+		im = cv2.resize(outG,(self.canvas_img.shape[0],self.canvas_img.shape[1]),interpolation=cv2.INTER_NEAREST)
+		self.canvas_img[:,:,0] = im
+		self.canvas_img[:,:,1] = im
+		self.canvas_img[:,:,2] = im
+
+	def draw_z_img(self):
+		self.canvas_z[:] = (.2,.2,.2)
+		h,w,_ = self.canvas_z.shape
+		delta = w / len(z)
+
+		#value : [0,1]
+		def drawbar(color,left,right,value,padding=0):
+			dh = int(value * h)
+			left = left + padding
+			right = right - padding
+			self.canvas_z[h - dh:h,left:right] = color
+		def impl():
+			for i,(color,z,zd) in enumerate(zip(self.zcolors,z_class,outD)):
+				x1 = int(i * delta)
+				x2 = x1 + int(delta)
+			
+				drawbar(color,x1,x2,z,1)
+				drawbar(color * 0.5,x1,x2,zd,int(delta / 4))
+
+				#label
+				cv2.putText(self.canvas_z,str(i),(x1,h - 5),cv2.FONT_HERSHEY_COMPLEX_SMALL,0.5,(1,1,1),1,cv2.FILLED,False)
+		impl()
+
+
+wbar = window_trackbars()
+wresult = window_result()
+
+'''
 #
 # graph selection
 #
@@ -179,16 +192,14 @@ def gss():
 	cv2.setMouseCallback('im-selection',onmouse)
 
 gss()		
+'''
 
 
-
-while cv2.getWindowProperty(Wcontrols, 0) >= 0:
+while wresult.alive():
 	if z_update:
 		z_update = False
 		predict()
-		draw_img()
-		draw_z_img()
-	cv2.imshow(Wimg,frame)
+		wresult.render()
 	k = cv2.waitKey(33) & 0xFF
 	if k == 27:
 		break
