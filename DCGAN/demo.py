@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-CONTROL_ONLY = True
+CONTROL_ONLY = False
 
 z = np.random.normal(size=(20,))
 z_class = z[:10]
@@ -62,7 +62,7 @@ class window_trackbars:
 		self.updating_ui = False
 
 		for i in range(len(z_class)):
-			cv2.createTrackbar(str(i), self.name, int(z_class[i] * steps), steps, lambda x,i=i: self.updating_ui or print('in') or setz(i,x / steps))
+			cv2.createTrackbar(str(i), self.name, int(z_class[i] * steps), steps, lambda x,i=i: self.updating_ui or setz(i,x / steps))
 
 	def update(self):
 		self.updating_ui = True
