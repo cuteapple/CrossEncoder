@@ -43,7 +43,7 @@ for i in range(10):
 
 import colorsys
 import random
-hcolors = [colorsys.hsv_to_rgb(random.uniform(0,1),1,1) for _ in range(10)]
+hcolors = [colorsys.hsv_to_rgb(r/10,1,1) for r in range(10)]
 frame = np.zeros((280 + 100,280,3))
 
 def draw_z_img():
@@ -54,7 +54,7 @@ def draw_z_img():
 	for pos,color,value in zip(range(len(z)),hcolors,z):
 		x = int(pos * delta)
 		height = int(h * value)
-		canvas[h-height:h,x:int(x + delta)] = color
+		canvas[h-height:h,x +1:int(x + delta)] = color
 
 while cv2.getWindowProperty(Wcontrols, 0) >= 0:
 	#predict()
