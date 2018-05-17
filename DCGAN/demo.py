@@ -19,11 +19,7 @@ outD = np.zeros(10)
 if not CONTROL_ONLY:
 	def init_models():
 		print('initializing ...')
-		import G
-		import D
-
-		global g
-		global d
+		import G,D
 
 		print('loading model ...')
 		g = G.new_G(z_shape)
@@ -32,22 +28,25 @@ if not CONTROL_ONLY:
 		d = D.D().model
 		d.load_weights('D.h5')
 
-	def predict():
-		global outG
-		global outD
-		global z_update
-		print('predict', z)
-		outG = g.predict(z.reshape(1,*z_shape))[0]
-		outD = d.predict(outG.reshape(1,28,28,1))[0]
-		print('D',outD)
+		global predict
+		def predict():
+			global outG
+			global outD
+			global z_update
+			print('predict', z)
+			outG = g.predict(z.reshape(1,*z_shape))[0]
+			outD = d.predict(outG.reshape(1,28,28,1))[0]
+			print('D',outD)
 else:
 	def init_models():
 		print('pass init models')
-	def predict():
-		global outD
-		outD = z_class
-		print('no model loaded')
+		global predict
+		def predict():
+			global outD
+			outD = z_class
+			print('no model loaded')
 
+init_models()
 
 Wcontrols = 'control'
 Wimg = 'result'
