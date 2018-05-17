@@ -59,15 +59,16 @@ class window_trackbars:
 		self.name = name
 		cv2.namedWindow(name,cv2.WINDOW_NORMAL) # autosize not work (too small)
 		self.steps = steps = 100
+		self.updating_ui = False
 
 		for i in range(len(z_class)):
-			cv2.createTrackbar(str(i), self.name, int(z_class[i] * steps), steps, lambda x,i=i: print(x,i) or setz(i,x / steps))
+			cv2.createTrackbar(str(i), self.name, int(z_class[i] * steps), steps, lambda x,i=i: self.updating_ui or print('in') or setz(i,x / steps))
 
 	def update(self):
-		print('up')
+		self.updating_ui = True
 		for i in range(len(z_class)):
 			cv2.setTrackbarPos(str(i),self.name,int(z_class[i]*self.steps))
-		print('eup')
+		self.updating_ui = False
 
 class window_result:
 	def __init__(self, name='result'):
