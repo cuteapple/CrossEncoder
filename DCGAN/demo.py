@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-CONTROL_ONLY = False
+CONTROL_ONLY = True
 
 z_shape = (20,)
 
@@ -27,10 +27,6 @@ def predict():
 	global outG
 	global outD
 	global update
-
-	if not update:
-		return
-	update = False
 	print('predict', z)
 	outG = g.predict(z.reshape(1,*z_shape))[0]
 	outD = d.predict(outG.reshape(1,28,28,1))[0]
@@ -56,7 +52,7 @@ for i in range(10):
 		z[i] = x / steps
 		global update
 		update = True
-		print('set {} to {}'.format(i,z[i]))
+		#print('set {} to {}'.format(i,z[i]))
 	cv2.createTrackbar(str(i),Wcontrols,int(z[i] * steps),steps, update_i)
 
 
@@ -89,16 +85,27 @@ def draw_z_img():
 		z_canvas[h - height:h, x1:x2] = color
 
 	#draw out D (D(G(z)))
-	for pos,color,value in zip(range(len(z)),hcolors,outD):
+	for pos,color,value in zip(range(len(outD)),hcolors,outD):
 		x = int(pos * delta)
 		height = int(h * value)
 		padding = int(delta / 4)
 		z_canvas[h - height:h, x + padding:int(x + delta - padding)] = color * .5
 
+	
+	#draw text
+	for i in range(10):
+		x1 = int(i * delta)
+		x2 = x1 + int(delta)
+		x1 += 1
+		#print(x1)
+		cv2.putText(z_canvas,str(i),(x1,h-5),cv2.FONT_HERSHEY_COMPLEX_SMALL,0.5,(1,1,1),1,cv2.FILLED,False)
+		
 while cv2.getWindowProperty(Wcontrols, 0) >= 0:
-	predict()
-	draw_img()
-	draw_z_img()
+	if update:
+		update = False
+		predict()
+		draw_img()
+		draw_z_img()
 	cv2.imshow(Wimg,frame)
 	k = cv2.waitKey(33) & 0xFF
 	if k == 27:
