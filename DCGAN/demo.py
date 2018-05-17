@@ -58,15 +58,16 @@ class window_trackbars:
 	def __init__(self,name='bars'):
 		self.name = name
 		cv2.namedWindow(name,cv2.WINDOW_NORMAL) # autosize not work (too small)
-		steps = 100
+		self.steps = steps = 100
 
 		for i in range(len(z_class)):
-			cv2.createTrackbar(str(i), self.name, int(z_class[i] * steps), steps, lambda x,i=i: setz(i,x / steps))
+			cv2.createTrackbar(str(i), self.name, int(z_class[i] * steps), steps, lambda x,i=i: print(x,i) or setz(i,x / steps))
 
 	def update(self):
+		print('up')
 		for i in range(len(z_class)):
-			cv2.setTrackbarPos(str(i),self.name,z_class[i])
-
+			cv2.setTrackbarPos(str(i),self.name,int(z_class[i]*self.steps))
+		print('eup')
 
 class window_result:
 	def __init__(self, name='result'):
@@ -185,6 +186,7 @@ class window_graph_selection():
 			z_class[:] = z_map[iy,ix]
 			global z_update
 			z_update = True
+			wbar.update()
 			
 		cv2.setMouseCallback('im-selection',onmouse)
 
