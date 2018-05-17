@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-CONTROL_ONLY = True
+CONTROL_ONLY = False
 
 z_shape = (20,)
 
@@ -158,14 +158,17 @@ def gss():
 		elif event == cv2.EVENT_LBUTTONUP:
 			hold = False
 
-		print(ix,iy)
-		print(zs[iy,ix])
+		#print(ix,iy)
+		#print(zs[iy,ix])
 
+		z = zs[iy,ix]
+
+		for i in range(10):
+			cv2.setTrackbarPos(str(i),Wcontrols,int(z[i] * 100))
 
 	cv2.setMouseCallback('im-selection',onmouse)
 
 gss()		
-	
 
 
 
