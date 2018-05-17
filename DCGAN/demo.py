@@ -5,38 +5,49 @@ CONTROL_ONLY = False
 
 z_shape = (20,)
 
-if not CONTROL_ONLY:
-	print('initializing ...')
-	import G
-	print('loading model ...')
-	g = G.new_G(z_shape)
-	g.load_weights('G.h5')
-
-	import D
-	d = D.D().model
-	d.load_weights('D.h5')
-
-
 z = np.random.normal(size=z_shape)
-z[:10] = 0
-outG = np.zeros((280,280))
+z_class = z[:10]
+z_noise = z[10:]
+z_class[:] = 0
+z_noise = np.random.normal(size = z_noise.shape)
+z_update = True
+
+outG = np.zeros((28,28))
 outD = np.zeros(10)
 
-update = True
-def predict():
-	global outG
-	global outD
-	global update
-	print('predict', z)
-	outG = g.predict(z.reshape(1,*z_shape))[0]
-	outD = d.predict(outG.reshape(1,28,28,1))[0]
-	print('D',outD)
 
-if CONTROL_ONLY:
+if not CONTROL_ONLY:
+	def init_models():
+		print('initializing ...')
+		import G
+		import D
+
+		global g
+		global d
+
+		print('loading model ...')
+		g = G.new_G(z_shape)
+		g.load_weights('G.h5')
+
+		d = D.D().model
+		d.load_weights('D.h5')
+
+	def predict():
+		global outG
+		global outD
+		global z_update
+		print('predict', z)
+		outG = g.predict(z.reshape(1,*z_shape))[0]
+		outD = d.predict(outG.reshape(1,28,28,1))[0]
+		print('D',outD)
+else:
+	def init_models():
+		print('pass init models')
 	def predict():
 		global outD
-		outD = z
-		print('pass predict')
+		outD = z_class
+		print('no model loaded')
+
 
 Wcontrols = 'control'
 Wimg = 'result'
@@ -50,8 +61,8 @@ for i in range(10):
 	steps = 100 # step of trackbar
 	def update_i(x,i=i):
 		z[i] = x / steps
-		global update
-		update = True
+		global z_update
+		z_update = True
 		#print('set {} to {}'.format(i,z[i]))
 	cv2.createTrackbar(str(i),Wcontrols,int(z[i] * steps),steps, update_i)
 
@@ -118,7 +129,7 @@ def gss():
 	poss = [[dx3,dy],[dx3 * 2,dy],[dx3 * 3,dy],
 		[dx4,dy * 2],[dx4 * 3,dy * 2],[dx4 * 5,dy * 2],[dx4 * 7,dy * 2],
 		[dx3,dy * 3],[dx3 * 2,dy * 3],[dx3 * 3,dy * 3]]
-	#poss = np.random.uniform(0,50,(10,2))
+	#poss = np.random.uniform(0,32,(10,2))
 
 	for x in range(w):
 		for y in range(h):
@@ -173,8 +184,8 @@ gss()
 
 
 while cv2.getWindowProperty(Wcontrols, 0) >= 0:
-	if update:
-		update = False
+	if z_update:
+		z_update = False
 		predict()
 		draw_img()
 		draw_z_img()
@@ -184,6 +195,6 @@ while cv2.getWindowProperty(Wcontrols, 0) >= 0:
 		break
 	if k == ord(' '):
 		z[10:] = np.random.normal(0,1,10)
-		update = True
+		z_update = True
 
 cv2.destroyAllWindows()
