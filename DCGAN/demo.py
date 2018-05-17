@@ -94,6 +94,7 @@ def draw_z_img():
 		height = int(h * value)
 		padding = int(delta / 4)
 		z_canvas[h - height:h, x + padding:int(x + delta - padding)] = color * .5
+
 while cv2.getWindowProperty(Wcontrols, 0) >= 0:
 	predict()
 	draw_img()
@@ -102,5 +103,8 @@ while cv2.getWindowProperty(Wcontrols, 0) >= 0:
 	k = cv2.waitKey(33) & 0xFF
 	if k == 27:
 		break
+	if k == ord(' '):
+		z[10:]=np.random.normal(0,1,10)
+		update = True
 
 cv2.destroyAllWindows()
