@@ -3,14 +3,11 @@ import numpy as np
 
 
 print('initializing ...')
-import G
-
-
+#import G
 print('loading model ...')
 z_shape = (20,)
-g = G.new_G(z_shape)
-g.load_weights('G.h5')
-
+#g = G.new_G(z_shape)
+#g.load_weights('G.h5')
 z = np.random.normal(size=z_shape)
 z[:10] = 0
 
@@ -46,24 +43,24 @@ for i in range(10):
 
 import colorsys
 import random
-hcolors = [colorsys.hsv_to_rgb(random.uniform(),1,1) for _ in range(10)]
-frame = np.zeros((280 + 100,280))
+hcolors = [colorsys.hsv_to_rgb(random.uniform(0,1),1,1) for _ in range(10)]
+hcolors = [list(map(lambda c:int(c * 255),c)) for c in hcolors]
+frame = np.zeros((280 + 100,280,3))
 
-def z_img():
+def draw_z_img():
 	canvas = frame[280:]
 	canvas[:] = 0
 	h,w,_ = canvas.shape
 	delta = w / len(z)
 	for pos,color,value in zip(range(len(z)),hcolors,z):
-		begin = pos*delta
-		end = begin+delta
-		height = h*value
-		canvas[]=color
+		x = int(pos * delta)
+		height = int(h * value)
+		canvas[-height:,x:int(x + delta)] = color
 
 while cv2.getWindowProperty(Wcontrols, 0) >= 0:
-	predict()
-	frame[:280] = im
-
+	#predict()
+	#frame[:280] = im
+	draw_z_img()
 	cv2.imshow(Wimg,frame)
 	k = cv2.waitKey(33) & 0xFF
 	if k == 27:
