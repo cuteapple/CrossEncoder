@@ -110,13 +110,13 @@ def gss():
 	h = 32
 
 	canvas = np.zeros((w,h,3))
-	selection = np.zeros((w,h,10))
+	zs = np.zeros((w,h,10))
 
 	dx3 = w / 4
-	dx4 = w / 5
+	dx4 = w / 8
 	dy = h / 4
 	poss = [[dx3,dy],[dx3 * 2,dy],[dx3 * 3,dy],
-		[dx4,dy * 2],[dx4 * 2,dy * 2],[dx4 * 3,dy * 2],[dx4 * 4,dy * 2],
+		[dx4,dy * 2],[dx4 * 3,dy * 2],[dx4 * 5,dy * 2],[dx4 * 7,dy * 2],
 		[dx3,dy * 3],[dx3 * 2,dy * 3],[dx3 * 3,dy * 3]]
 	#poss = np.random.uniform(0,50,(10,2))
 
@@ -128,14 +128,17 @@ def gss():
 			weight = 0
 			for i in range(10):
 				dist = np.sqrt(np.sum(np.square(pos - poss[i])))
-				w = 1 / np.sqrt(dist + 1)
+				w = 1 / (dist + 0.1)
 				weight += w
 				color += w * hcolors[i]
-				z[i] =weight
+				z[i] = w
 			color /= weight
+			z /= weight
+			zs[y,x] = z 
 			canvas[y,x] = color
 
 	canvas = cv2.resize(canvas,(0,0),fx=12,fy=12,interpolation=cv2.INTER_CUBIC)
+	zs = cv2.resize(zs,(0,0),fx=12,fy=12,interpolation=cv2.INTER_CUBIC)
 	cv2.namedWindow('im-selection')
 	cv2.imshow('im-selection',canvas)
 
@@ -156,6 +159,7 @@ def gss():
 			hold = False
 
 		print(ix,iy)
+		print(zs[iy,ix])
 
 
 	cv2.setMouseCallback('im-selection',onmouse)
