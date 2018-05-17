@@ -42,15 +42,29 @@ for i in range(10):
 		update = True
 		print('set {} to {}'.format(i,z[i]))
 	cv2.createTrackbar(str(i),Wcontrols,int(z[i] * steps),steps, update_i)
-	
-def random_z():
-	z[10:] = np.random.normal(size=10)
-cv2.createButton('Random Z',random_z)
+
+
+import colorsys
+import random
+hcolors = [colorsys.hsv_to_rgb(random.uniform(),1,1) for _ in range(10)]
+frame = np.zeros((280 + 100,280))
+
+def z_img():
+	canvas = frame[280:]
+	canvas[:] = 0
+	h,w,_ = canvas.shape
+	delta = w / len(z)
+	for pos,color,value in zip(range(len(z)),hcolors,z):
+		begin = pos*delta
+		end = begin+delta
+		height = h*value
+		canvas[]=color
 
 while cv2.getWindowProperty(Wcontrols, 0) >= 0:
 	predict()
+	frame[:280] = im
 
-	cv2.imshow(Wimg,im)
+	cv2.imshow(Wimg,frame)
 	k = cv2.waitKey(33) & 0xFF
 	if k == 27:
 		break
