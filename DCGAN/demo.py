@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-CONTROL_ONLY = False
+CONTROL_ONLY = True
 
 z = np.random.normal(size=(20,))
 z_class = z[:10]
@@ -123,77 +123,72 @@ class window_result:
 wbar = window_trackbars()
 wresult = window_result()
 
-'''
+
 #
 # graph selection
 #
-def gss():
+class window_graph_selection():
+	def __init__(self,name='im-selection'):
+		self.name = name
 
-	w = 32
-	h = 32
+		w,h = 32,32
 
-	canvas = np.zeros((w,h,3))
-	zs = np.zeros((w,h,10))
+		canvas = np.zeros((w,h,3))
+		z_map = np.zeros((w,h,10))
 
-	dx3 = w / 4
-	dx4 = w / 8
-	dy = h / 4
-	poss = [[dx3,dy],[dx3 * 2,dy],[dx3 * 3,dy],
-		[dx4,dy * 2],[dx4 * 3,dy * 2],[dx4 * 5,dy * 2],[dx4 * 7,dy * 2],
-		[dx3,dy * 3],[dx3 * 2,dy * 3],[dx3 * 3,dy * 3]]
-	#poss = np.random.uniform(0,32,(10,2))
+		dx3 = w / 4
+		dx4 = w / 8
+		dy = h / 4
+		center = [[dx3,dy],[dx3 * 2,dy],[dx3 * 3,dy],
+			[dx4,dy * 2],[dx4 * 3,dy * 2],[dx4 * 5,dy * 2],[dx4 * 7,dy * 2],
+			[dx3,dy * 3],[dx3 * 2,dy * 3],[dx3 * 3,dy * 3]]
+		#center = np.random.uniform(0,32,(10,2))
 
-	for x in range(w):
-		for y in range(h):
-			pos = np.array([x,y])
-			color = np.zeros(3)
-			z = np.zeros(10)
-			weight = 0
-			for i in range(10):
-				dist = np.sqrt(np.sum(np.square(pos - poss[i])))
-				w = 1 / (dist + 0.1)
-				weight += w
-				color += w * hcolors[i]
-				z[i] = w
-			color /= weight
-			z /= weight
-			zs[y,x] = z 
-			canvas[y,x] = color
+		for x in range(w):
+			for y in range(h):
+				pos = np.array([x,y])
+				color = np.zeros(3)
+				z = np.zeros(10)
+				total_weight = 0
+				for i in range(10):
+					dist = np.sqrt(np.sum(np.square(pos - center[i])))
+					w = 1 / (dist + 0.1)
+					total_weight += w
+					color += w * wresult.zcolors[i]
+					z[i] = w
+				color /= total_weight
+				z /= total_weight
+				z_map[y,x] = z 
+				canvas[y,x] = color
 
-	canvas = cv2.resize(canvas,(0,0),fx=12,fy=12,interpolation=cv2.INTER_CUBIC)
-	zs = cv2.resize(zs,(0,0),fx=12,fy=12,interpolation=cv2.INTER_CUBIC)
-	cv2.namedWindow('im-selection')
-	cv2.imshow('im-selection',canvas)
+		canvas = cv2.resize(canvas,(0,0),fx=12,fy=12,interpolation=cv2.INTER_CUBIC)
+		z_map = cv2.resize(z_map,(0,0),fx=12,fy=12,interpolation=cv2.INTER_CUBIC)
+		cv2.namedWindow(self.name)
+		cv2.imshow(self.name,canvas)
 
-	hold = False
-	ix,iy = 0,0
-	def onmouse(event,x,y,flags,param):
-		nonlocal hold,ix,iy
-		if event == cv2.EVENT_LBUTTONDOWN:
-			hold = True
-			ix,iy = x,y
+		hold = False
+		ix,iy = 0,0
+		def onmouse(event,x,y,flags,param):
+			nonlocal hold,ix,iy
+			if event == cv2.EVENT_LBUTTONDOWN:
+				hold = True
+				ix,iy = x,y
 
-		elif event == cv2.EVENT_MOUSEMOVE:
-			if not hold:
-				return
-			ix,iy = x,y
+			elif event == cv2.EVENT_MOUSEMOVE:
+				if not hold:
+					return
+				ix,iy = x,y
 
-		elif event == cv2.EVENT_LBUTTONUP:
-			hold = False
+			elif event == cv2.EVENT_LBUTTONUP:
+				hold = False
 
-		#print(ix,iy)
-		#print(zs[iy,ix])
+			z_class[:] = z_map[iy,ix]
+			global z_update
+			z_update = True
+			
+		cv2.setMouseCallback('im-selection',onmouse)
 
-		z = zs[iy,ix]
-
-		for i in range(10):
-			cv2.setTrackbarPos(str(i),Wcontrols,int(z[i] * 100))
-
-	cv2.setMouseCallback('im-selection',onmouse)
-
-gss()		
-'''
-
+wselection = window_graph_selection()
 
 while wresult.alive():
 	if z_update:
@@ -204,7 +199,7 @@ while wresult.alive():
 	if k == 27:
 		break
 	if k == ord(' '):
-		z[10:] = np.random.normal(0,1,10)
+		z_noise[:] = np.random.normal(size=z_noise.shape)
 		z_update = True
 
 cv2.destroyAllWindows()
