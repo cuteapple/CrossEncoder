@@ -16,14 +16,13 @@ Wimg = 'result'
 cv2.namedWindow(Wimg,cv2.WINDOW_AUTOSIZE)
 
 
-def update_i(i,x):
-	z[i] = x / 255
-	print('set {} to {}'.format(i,z[i]))
 
 # create trackbars for color change
 for i in range(10):
-	ii = i #@#%#%1^!%
-	cv2.createTrackbar(str(i),Wcontrols,0,100, lambda x: update_i(ii,x))
+	def update_i(x,i=i):
+		z[i] = x / 100
+		print('set {} to {}'.format(i,z[i]))
+	cv2.createTrackbar(str(i),Wcontrols,0,100, update_i)
 
 #import G
 #g = G.new_G(z_shape)
