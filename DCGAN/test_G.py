@@ -25,7 +25,7 @@ sample = [np.zeros((28,28))]*10
 
 import cv2
 for i,(p,y) in enumerate(zip(x,y)):
-	y = int(np.dot(y,np.arange(10)))
+	y = int(np.dot(y[:10],np.arange(10)))
 	p = p.reshape(28,28)*255
 	sample[y] = p
 	cv2.imwrite('{}/{}-{}.png'.format(o,y,i),p)
