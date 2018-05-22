@@ -11,7 +11,7 @@ class NoizyData:
 		ay = noise_area[1]
 		(x,y),(tx,ty) = self.load_mnist()
 
-		zeros = np.zeros(len(y),11)
+		zeros = np.zeros((len(y),11))
 		zeros[:,:10]=y
 		y = zeros
 
