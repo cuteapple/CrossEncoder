@@ -15,6 +15,12 @@ class NoizyData:
 		zeros[:,:10]=y
 		y = zeros
 
+		
+		zeros = np.zeros((len(ty),11))
+		zeros[:,:10]=ty
+		ty = zeros
+
+
 		for i in range(len(x)):
 			noise = np.random.normal(noise_mean, noise_sigma, size=(ax,ay,1)) * noise_scaler
 			dx = np.random.randint(28 - 1 - ax)
