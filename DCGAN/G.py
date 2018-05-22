@@ -34,7 +34,8 @@ def z(batch_size,length):
 		answer = np.eye(10)[np.random.choice(10,batch_size)]
 		z = np.random.normal(size=(batch_size,length))
 		z[:,0:10] = answer
-		z[10] = 0
+		z[:,10]=0
+		answer = z[:,:11]
 		return z,answer
 	while True:
 		yield g()
