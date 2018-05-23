@@ -24,22 +24,21 @@ class NoizyData:
 		(x,y),(tx,ty) = self.load_mnist()
 
 		noisy_x = np.copy(x)
-
-		for i in range(len(x)):
-			noise = np.random.normal(noise_mean, noise_sigma, size=(ax,ay,1)) * noise_scaler
-			dx = np.random.randint(28 - (ax - 1))
-			dy = np.random.randint(28 - (ay - 1))
-			noisy_x[i, dx:dx + ax, dy:dy + ay] += noise
-					
-		noisy_x = np.clip(noisy_x,0.0,1.0)
-
 		noisy_y = np.copy(y)
+		
+		lx = len(noisy_x)
+		noise = np.random.normal(noise_mean, noise_sigma, size=(lx,ax,ay,1)) * noise_scaler
+		dx = np.random.randint(28 - (ax - 1),size=lx)
+		dy = np.random.randint(28 - (ay - 1),size=lx)
+		noisy_x[np.arange(len(x)),dy:dy+28,dx:dx+28] += noise
+			
+		noisy_x = np.clip(noisy_x,0.0,1.0)
 
 
 		self.x = np.concatenate((x,noisy_x), axis=0)
 		self.y = [np.concatenate((y,noisy_y), axis=0), np.concatenate((np.zeros(len(y)),np.ones(len(noisy_y))), axis=0)]
 		self.tx = tx
-		self.ty = [ty,np.zeros(len(ty))]
+		self.ty = [ty, np.zeros(len(ty))]
 
 	def train(self):
 		return self.x,self.y
