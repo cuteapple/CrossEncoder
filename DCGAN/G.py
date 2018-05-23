@@ -71,9 +71,9 @@ if __name__ == '__main__':
 	m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'])
 
 	print('training ...')
-	m.fit_generator(z(args.batch_size),
-		steps_per_epoch = args.steps,
-		epochs=args.epochs)
+	#m.fit_generator(z(args.batch_size),
+	#	steps_per_epoch = args.steps,
+	#	epochs=args.epochs)
 
 	print('saving ...')
 	g.save_weights(args.path)
