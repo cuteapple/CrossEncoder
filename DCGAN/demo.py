@@ -20,8 +20,6 @@ outG = np.zeros((28,28))
 outD = np.zeros(10)
 
 
-
-
 if not CONTROL_ONLY:
 	def init_models():
 		print('initializing ...')

@@ -7,7 +7,7 @@ def ZData(batch_size,length):
 	def g():
 		answer = np.eye(nclass)[np.random.choice(nclass,batch_size)]
 		z = np.random.normal(size=(batch_size,length))
-		z[:,0:nclass] = answer
+		z[:,:nclass] = answer
 		z[:,nclass]=0
 		answer = z[:,:nclass+1]
 		return z,answer
@@ -32,15 +32,14 @@ class NoizyData:
 			noisy_x[i, dx:dx + ax, dy:dy + ay] += noise
 					
 		noisy_x = np.clip(noisy_x,0.0,1.0)
-		
+
 		noisy_y = np.copy(y)
-		noisy_y[:,nclass] = 10
 
 
 		self.x = np.concatenate((x,noisy_x), axis=0)
-		self.y = np.concatenate((y,noisy_y), axis=0)
+		self.y = [np.concatenate((y,noisy_y), axis=0), np.concatenate((np.zeros(len(y)),np.ones(len(noisy_y))), axis=0)]
 		self.tx = tx
-		self.ty = ty
+		self.ty = [ty,np.zeros(len(ty))]
 
 	def train(self):
 		return self.x,self.y
