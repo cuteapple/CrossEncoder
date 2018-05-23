@@ -1,6 +1,40 @@
 import keras
 import numpy as np
 
+
+def z(batch_size,length):
+	def g():
+		answer = np.eye(10)[np.random.choice(10,batch_size)]
+		z = np.random.normal(size=(batch_size,length))
+		z[:,0:10] = answer
+		z[:,10]=0
+		answer = z[:,:11]
+		return z,answer
+	while True:
+		yield g()
+
+class ZData:
+	''' Data for G '''
+	def __init__(self, noise_length=10):
+		self.candidate = np.eye(10)
+
+		#shape of z = noise + class
+		self.shape = noise_length+10, 
+		
+		#shape of D(G(z)) = noise + validation + class
+		self.shape_dz = 10 + 1,
+
+		self.noise_length = noise_length
+
+	def batch(self,size):
+		noise = np.random.normal(size=(size,self.noise_length))
+		answer = np.eye(10)[np.random.choice(10,size)]
+		
+		z = np.zeros()
+
+	def generator(batch_size):
+
+
 class NoizyData:
 	'''noizy mnist data'''
 	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(7,7)):

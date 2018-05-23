@@ -1,12 +1,13 @@
 import keras
 import numpy as np
-from keras.models import Sequential,Model
-from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
-from keras_contrib.layers.normalization import InstanceNormalization 
-from D import D
-
+import D
 
 def new_G(input_shape):
+	
+	from keras.models import Sequential,Model
+	from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
+	from keras_contrib.layers.normalization import InstanceNormalization
+
 	return Sequential(name='G',
 		layers=[Dense(128 * 7 * 7, activation="relu", input_shape=input_shape),
 			Reshape((7, 7, 128)),
@@ -50,7 +51,7 @@ if __name__ == '__main__':
 	parser.add_argument("-p","--path", default="G.h5", type=str)
 	parser.add_argument("-dp","--discriminator_path", default="D.h5", type=str)
 	args = parser.parse_args()
-	print(args)
+	print('args :',args)
 
 	output_shape = (28,28,1)
 	z_len = 20
@@ -62,6 +63,7 @@ if __name__ == '__main__':
 	except: print('load weight for G failed')
 	
 	print('loading D ...')
+	d = D.new_D()
 	d = D.Load(args.discriminator_path)
 	d = d.model
 	d.trainable = False
