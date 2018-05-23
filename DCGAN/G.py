@@ -1,6 +1,7 @@
 import keras
 import numpy as np
 import D
+from Dataset import ZData
 
 def new_G(input_shape):
 	
@@ -28,18 +29,6 @@ def new_G(input_shape):
 			InstanceNormalization(),
 			Conv2D(1, kernel_size=3, padding="same"),
 			Activation("sigmoid")])
-
-
-def z(batch_size,length):
-	def g():
-		answer = np.eye(10)[np.random.choice(10,batch_size)]
-		z = np.random.normal(size=(batch_size,length))
-		z[:,0:10] = answer
-		z[:,10]=0
-		answer = z[:,:11]
-		return z,answer
-	while True:
-		yield g()
 
 if __name__ == '__main__':
 	
