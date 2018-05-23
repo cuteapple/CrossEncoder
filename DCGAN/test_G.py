@@ -15,16 +15,16 @@ try:
 except:
 	pass
 
-g = G.new_G((20,))
+g = G.new_G(10,10)
 g.load_weights(args.path)
 
-z,y = next(G.z(100,20))
-x = g.predict(z)
+z,(y,_) = next(G.z(100))
+p = g.predict(z)
 
 sample = [np.zeros((28,28))]*10
 
 import cv2
-for i,(p,y) in enumerate(zip(x,y)):
+for i,(p,y) in enumerate(zip(p,y)):
 	y = int(np.dot(y[:10],np.arange(10)))
 	p = p.reshape(28,28)*255
 	sample[y] = p
