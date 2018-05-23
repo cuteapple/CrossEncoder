@@ -2,15 +2,22 @@ import keras
 import numpy as np
 
 nclass = 10
+nnoise = 10
+real_value = 0
+fack_value = 1
 
-def ZData(batch_size,length):
+reals = np.zeros
+facks = np.ones
+#return np.ones(shape)*real_value
+#return np.ones(shape)*fack_value
+
+
+def ZData(batch_size):
+	r = reals(batch_size)
 	def g():
-		answer = np.eye(nclass)[np.random.choice(nclass,batch_size)]
-		z = np.random.normal(size=(batch_size,length))
-		z[:,:nclass] = answer
-		z[:,nclass]=0
-		answer = z[:,:nclass+1]
-		return z,answer
+		c = np.eye(nclass)[np.random.choice(nclass,batch_size)]
+		z = np.random.normal(size=(batch_size,nnoise))
+		return [c,z],[c,r]
 	while True:
 		yield g()
 
@@ -37,9 +44,9 @@ class NoizyData:
 
 
 		self.x = np.concatenate((x,noisy_x), axis=0)
-		self.y = [np.concatenate((y,noisy_y), axis=0), np.concatenate((np.zeros(len(y)),np.ones(len(noisy_y))), axis=0)]
+		self.y = [np.concatenate((y,noisy_y), axis=0), np.concatenate((reals(len(y)),facks(len(noisy_y))), axis=0)]
 		self.tx = tx
-		self.ty = [ty,np.zeros(len(ty))]
+		self.ty = [ty,reals(len(ty))]
 
 	def train(self):
 		return self.x,self.y

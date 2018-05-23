@@ -22,7 +22,11 @@ def new_D():
 		layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=(28,28,1)),
 			Conv2D(64, kernel_size=3, strides=2, activation='relu'),
 			Dropout(0.5),
+			Conv2D(64, kernel_size=3, strides=2, activation='relu'),
+			Dropout(0.5),
 			Flatten(),
+			Dense(128, activation='relu'),
+			Dropout(0.5),
 			Dense(128, activation='relu'),
 			Dropout(0.5),
 			Dense(1)])
@@ -32,6 +36,7 @@ def new_D():
 	on = modeln(i)
 
 	model = Model(i,[oc,on],name='D')
+	#model.summary()
 
 	return model
 
@@ -59,7 +64,7 @@ if __name__ == "__main__":
 	d.compile(optimizer='adadelta', loss='mse', metrics=['accuracy'])
 	
 	x,y = data.train()
-	d.fit(x,y, batch_size=args.batch_size, epochs=args.epochs, validation_data=data.test())
+	#d.fit(x,y, batch_size=args.batch_size, epochs=args.epochs, validation_data=data.test())
 
 	print('saving ...')
 	d.save_weights(args.path)

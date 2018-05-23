@@ -2,16 +2,26 @@ import keras
 import numpy as np
 import D
 from Dataset import ZData as z
+import Dataset
 
 from keras.models import Sequential,Model
-from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
+from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input,Concatenate
 from keras_contrib.layers.normalization import InstanceNormalization
 
-def new_G(input_shape):
-	return Sequential(name='G',
-		layers=[Dense(128 * 7 * 7, activation="relu", input_shape=input_shape),
-			Reshape((7, 7, 128)),
+def new_G(nclass,nnoise):
+
+	i_c = Input((nclass,),name='class')
+	t1 = Dense(nclass,activation='relu')(i_c)
+	i_n = Input((nnoise,),name='noise')
+	t2 = Dense(nnoise,activation='relu')(i_n)
+	i = Concatenate()([t1,t2])
+
+	gen = Sequential(name='gen',
+		layers=[
+			Dense(128 * 7 * 7,input_shape=(nclass+nnoise,)),
+			Activation("relu"),
 			InstanceNormalization(),
+			Reshape((7, 7, 128)),
 			UpSampling2D(),
 			Conv2D(128, kernel_size=3, padding="same"),
 			Activation("relu"),
@@ -28,6 +38,8 @@ def new_G(input_shape):
 			InstanceNormalization(),
 			Conv2D(1, kernel_size=3, padding="same"),
 			Activation("sigmoid")])
+	
+	return Model([i_c,i_n],gen(i),name='G')
 
 if __name__ == '__main__':
 	
@@ -40,11 +52,6 @@ if __name__ == '__main__':
 	parser.add_argument("-dp","--discriminator-path", default="D.h5", type=str)
 	args = parser.parse_args()
 	print('args :',args)
-
-	output_shape = (28,28,1)
-	z_len = 20
-	input_shape = (z_len,)
-	
 	
 	print('loading D ...')
 	d = D.new_D()
@@ -52,19 +59,19 @@ if __name__ == '__main__':
 	d.trainable = False
 
 	print('loading G ...')
-	g = new_G(input_shape)
+	g = new_G(Dataset.nclass,Dataset.nnoise)
 	try: g.load_weights(args.path)
 	except: print('failed')
 	else: print('success')
 
 
 	print('linking G & D ...')
-	input = Input(input_shape)
-	m = Model(input,d(g(input)))
+	input = [Input((Dataset.nclass,)),Input((Dataset.nnoise,))]
+	m = Model(input, d(g(input)))
 	m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'])
 
 	print('training ...')
-	m.fit_generator(z(args.batch_size,z_len),
+	m.fit_generator(z(args.batch_size),
 		steps_per_epoch = args.steps,
 		epochs=args.epochs)
 
