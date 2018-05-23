@@ -23,6 +23,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="D.py" />
+    <Compile Include="Dataset.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="demo.py">
       <SubType>Code</SubType>
     </Compile>
