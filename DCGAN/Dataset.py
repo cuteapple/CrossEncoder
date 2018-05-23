@@ -1,3 +1,6 @@
+import keras
+import numpy as np
+
 class NoizyData:
 	'''noizy mnist data'''
 	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(7,7)):
