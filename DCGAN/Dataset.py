@@ -23,13 +23,15 @@ class NoizyData:
 		ay = noise_area[1]
 		(x,y),(tx,ty) = self.load_mnist()
 
+		noisy_x = np.copy(x)
+
 		for i in range(len(x)):
 			noise = np.random.normal(noise_mean, noise_sigma, size=(ax,ay,1)) * noise_scaler
 			dx = np.random.randint(28 - (ax - 1))
 			dy = np.random.randint(28 - (ay - 1))
-			x[i, dx:dx + ax, dy:dy + ay] += noise
+			noisy_x[i, dx:dx + ax, dy:dy + ay] += noise
 					
-		noisy_x = np.clip(x,0.0,1.0)
+		noisy_x = np.clip(noisy_x,0.0,1.0)
 		
 		noisy_y = np.copy(y)
 		noisy_y[:,nclass] = 10
