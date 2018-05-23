@@ -1,13 +1,15 @@
 import keras
 import numpy as np
 
+nclass = 10
+
 def ZData(batch_size,length):
 	def g():
-		answer = np.eye(10)[np.random.choice(10,batch_size)]
+		answer = np.eye(nclass)[np.random.choice(nclass,batch_size)]
 		z = np.random.normal(size=(batch_size,length))
-		z[:,0:10] = answer
-		z[:,10]=0
-		answer = z[:,:11]
+		z[:,0:nclass] = answer
+		z[:,nclass]=0
+		answer = z[:,:nclass+1]
 		return z,answer
 	while True:
 		yield g()
@@ -22,12 +24,12 @@ class NoizyData:
 		(x,y),(tx,ty) = self.load_mnist()
 
 		zeros = np.zeros((len(y),11))
-		zeros[:,:10]=y
+		zeros[:,:nclass]=y
 		y = zeros
 
 		
 		zeros = np.zeros((len(ty),11))
-		zeros[:,:10]=ty
+		zeros[:,:nclass]=ty
 		ty = zeros
 
 
@@ -40,7 +42,7 @@ class NoizyData:
 		noisy_x = np.clip(x,0.0,1.0)
 		
 		noisy_y = np.copy(y)
-		noisy_y[:,10] = 1
+		noisy_y[:,nclass] = 1
 
 
 		self.x = np.concatenate((x,noisy_x), axis=0)
@@ -68,7 +70,7 @@ class NoizyData:
 		(x_train, y_train), (x_test, y_test) = mnist.load_data()
 		x_train = NoizyData.transform(x_train)
 		x_test = NoizyData.transform(x_test)
-		y_train = keras.utils.to_categorical(y_train, 10)
-		y_test = keras.utils.to_categorical(y_test, 10)
+		y_train = keras.utils.to_categorical(y_train, nclass)
+		y_test = keras.utils.to_categorical(y_test, nclass)
 		return (x_train,y_train),(x_test,y_test)
 

@@ -33,7 +33,7 @@ if __name__ == '__main__':
 	
 	import argparse
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-e","--epochs", default=1000, type=int)
+	parser.add_argument("-e","--epochs", default=100, type=int)
 	parser.add_argument("-s","--steps", default=64, type=int)
 	parser.add_argument("-b","--batch-size", default=128, type=int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)
@@ -45,16 +45,18 @@ if __name__ == '__main__':
 	z_len = 20
 	input_shape = (z_len,)
 	
+	
+	print('loading D ...')
+	d = D.new_D()
+	d.load_weights(args.discriminator_path)
+	d.trainable = False
+
 	print('loading G ...')
 	g = new_G(input_shape)
 	try: g.load_weights(args.path)
 	except: print('failed')
 	else: print('success')
 
-	print('loading D ...')
-	d = D.new_D()
-	d.load_weights(args.discriminator_path)
-	d.trainable = False
 
 	print('linking G & D ...')
 	input = Input(input_shape)
@@ -62,9 +64,9 @@ if __name__ == '__main__':
 	m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'])
 
 	print('training ...')
-	#m.fit_generator(z(args.batch_size,z_len),
-	#	steps_per_epoch = args.steps,
-	#	epochs=args.epochs)
+	m.fit_generator(z(args.batch_size,z_len),
+		steps_per_epoch = args.steps,
+		epochs=args.epochs)
 
 	print('saving ...')
 	g.save_weights(args.path)
