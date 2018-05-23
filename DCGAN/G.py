@@ -1,14 +1,13 @@
 import keras
 import numpy as np
 import D
-from Dataset import ZData
+from Dataset import ZData as z
+
+from keras.models import Sequential,Model
+from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
+from keras_contrib.layers.normalization import InstanceNormalization
 
 def new_G(input_shape):
-	
-	from keras.models import Sequential,Model
-	from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
-	from keras_contrib.layers.normalization import InstanceNormalization
-
 	return Sequential(name='G',
 		layers=[Dense(128 * 7 * 7, activation="relu", input_shape=input_shape),
 			Reshape((7, 7, 128)),
@@ -36,9 +35,9 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-e","--epochs", default=1000, type=int)
 	parser.add_argument("-s","--steps", default=64, type=int)
-	parser.add_argument("-b","--batch_size", default=128, type=int)
+	parser.add_argument("-b","--batch-size", default=128, type=int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)
-	parser.add_argument("-dp","--discriminator_path", default="D.h5", type=str)
+	parser.add_argument("-dp","--discriminator-path", default="D.h5", type=str)
 	args = parser.parse_args()
 	print('args :',args)
 
@@ -49,12 +48,12 @@ if __name__ == '__main__':
 	print('loading G ...')
 	g = new_G(input_shape)
 	try: g.load_weights(args.path)
-	except: print('load weight for G failed')
-	
+	except: print('failed')
+	else: print('success')
+
 	print('loading D ...')
 	d = D.new_D()
-	d = D.Load(args.discriminator_path)
-	d = d.model
+	d.load_weights(args.discriminator_path)
 	d.trainable = False
 
 	print('linking G & D ...')
@@ -63,9 +62,9 @@ if __name__ == '__main__':
 	m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'])
 
 	print('training ...')
-	m.fit_generator(z(args.batch_size,z_len),
-		steps_per_epoch = args.steps,
-		epochs=args.epochs)
+	#m.fit_generator(z(args.batch_size,z_len),
+	#	steps_per_epoch = args.steps,
+	#	epochs=args.epochs)
 
 	print('saving ...')
 	g.save_weights(args.path)
