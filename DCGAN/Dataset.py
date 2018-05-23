@@ -23,16 +23,6 @@ class NoizyData:
 		ay = noise_area[1]
 		(x,y),(tx,ty) = self.load_mnist()
 
-		zeros = np.zeros((len(y),11))
-		zeros[:,:nclass]=y
-		y = zeros
-
-		
-		zeros = np.zeros((len(ty),11))
-		zeros[:,:nclass]=ty
-		ty = zeros
-
-
 		for i in range(len(x)):
 			noise = np.random.normal(noise_mean, noise_sigma, size=(ax,ay,1)) * noise_scaler
 			dx = np.random.randint(28 - (ax - 1))

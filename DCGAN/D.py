@@ -3,9 +3,9 @@ import numpy as np
 from Dataset import NoizyData
 
 def new_D():
-	from keras.models import Sequential
-	from keras.layers import Conv2D,Flatten,Dense,Dropout
-	model = Sequential(name='D',
+	from keras.models import Sequential,Model
+	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
+	modelc = Sequential(name='classifier',
 		layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=(28,28,1)),
 			Conv2D(64, kernel_size=3, strides=2, activation='relu'),
 			Dropout(0.5),
@@ -16,7 +16,23 @@ def new_D():
 			Dropout(0.5),
 			Dense(128, activation='relu'),
 			Dropout(0.5),
-			Dense(11)])
+			Dense(10)])
+
+	modeln = Sequential(name='isnoisy',
+		layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=(28,28,1)),
+			Conv2D(64, kernel_size=3, strides=2, activation='relu'),
+			Dropout(0.5),
+			Flatten(),
+			Dense(128, activation='relu'),
+			Dropout(0.5),
+			Dense(1)])
+	
+	i = Input((28,28,1),name='image')
+	oc = modelc(i)
+	on = modeln(i)
+
+	model = Model(i,[oc,on],name='D')
+
 	return model
 
 if __name__ == "__main__":
