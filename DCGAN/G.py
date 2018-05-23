@@ -1,10 +1,11 @@
 import keras
 import numpy as np
+import D
+from Dataset import ZData as z
+
 from keras.models import Sequential,Model
 from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
-from keras_contrib.layers.normalization import InstanceNormalization 
-from D import D
-
+from keras_contrib.layers.normalization import InstanceNormalization
 
 def new_G(input_shape):
 	return Sequential(name='G',
@@ -28,43 +29,34 @@ def new_G(input_shape):
 			Conv2D(1, kernel_size=3, padding="same"),
 			Activation("sigmoid")])
 
-
-def z(batch_size,length):
-	def g():
-		answer = np.eye(10)[np.random.choice(10,batch_size)]
-		z = np.random.normal(size=(batch_size,length))
-		z[:,0:10] = answer
-		z[:,10]=0
-		answer = z[:,:11]
-		return z,answer
-	while True:
-		yield g()
-
 if __name__ == '__main__':
 	
 	import argparse
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-e","--epochs", default=1000, type=int)
+	parser.add_argument("-e","--epochs", default=100, type=int)
 	parser.add_argument("-s","--steps", default=64, type=int)
-	parser.add_argument("-b","--batch_size", default=128, type=int)
+	parser.add_argument("-b","--batch-size", default=128, type=int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)
-	parser.add_argument("-dp","--discriminator_path", default="D.h5", type=str)
+	parser.add_argument("-dp","--discriminator-path", default="D.h5", type=str)
 	args = parser.parse_args()
-	print(args)
+	print('args :',args)
 
 	output_shape = (28,28,1)
 	z_len = 20
 	input_shape = (z_len,)
 	
+	
+	print('loading D ...')
+	d = D.new_D()
+	d.load_weights(args.discriminator_path)
+	d.trainable = False
+
 	print('loading G ...')
 	g = new_G(input_shape)
 	try: g.load_weights(args.path)
-	except: print('load weight for G failed')
-	
-	print('loading D ...')
-	d = D.Load(args.discriminator_path)
-	d = d.model
-	d.trainable = False
+	except: print('failed')
+	else: print('success')
+
 
 	print('linking G & D ...')
 	input = Input(input_shape)
