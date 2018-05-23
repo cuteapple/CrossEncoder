@@ -64,7 +64,7 @@ if __name__ == "__main__":
 	d.compile(optimizer='adadelta', loss='mse', metrics=['accuracy'])
 	
 	x,y = data.train()
-	#d.fit(x,y, batch_size=args.batch_size, epochs=args.epochs, validation_data=data.test())
+	d.fit(x,y, batch_size=args.batch_size, epochs=args.epochs, validation_data=data.test())
 
 	print('saving ...')
 	d.save_weights(args.path)
