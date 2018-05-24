@@ -23,7 +23,7 @@ def ZData(batch_size):
 
 class NoizyData:
 	'''noizy mnist data'''
-	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(28,28)):
+	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(5,5)):
 		noise_mean = 0.0
 
 		ax = noise_area[0]
