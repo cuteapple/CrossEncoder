@@ -68,7 +68,7 @@ if __name__ == '__main__':
 	print('linking G & D ...')
 	input = [Input((Dataset.nclass,)),Input((Dataset.nnoise,))]
 	m = Model(input, d(g(input)))
-	m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'])
+	m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'],loss_weights=[10,1])
 
 	print('training ...')
 	m.fit_generator(z(args.batch_size),
