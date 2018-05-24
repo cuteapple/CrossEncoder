@@ -13,10 +13,12 @@ facks = np.ones
 
 
 def ZData(batch_size):
-	r = reals(batch_size)
+	#r = reals(batch_size)
 	def g():
 		c = np.eye(nclass)[np.random.choice(nclass,batch_size)]
 		z = np.random.normal(size=(batch_size,nnoise))
+		r = np.random.random_integers(2,size=(batch_size,))
+		z[:,0] = r
 		return [c,z],[c,r]
 	while True:
 		yield g()
