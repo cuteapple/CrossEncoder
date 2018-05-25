@@ -11,10 +11,8 @@ from keras_contrib.layers.normalization import InstanceNormalization
 def new_G(nclass,nnoise):
 
 	i_c = Input((nclass,),name='class')
-	t1 = Dense(nclass,activation='relu')(i_c)
 	i_n = Input((nnoise,),name='noise')
-	t2 = Dense(nnoise,activation='relu')(i_n)
-	i = Concatenate()([t1,t2])
+	i = Concatenate()([i_c,i_n])
 
 	gen = Sequential(name='gen',
 		layers=[
