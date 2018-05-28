@@ -17,7 +17,7 @@ def ZData(batch_size):
 	def g():
 		c = np.eye(nclass)[np.random.choice(nclass,batch_size)]
 		z = np.random.normal(size=(batch_size,nnoise))
-		r = np.random.binomial(size=3, n=1, p=0.1) # assume real = 0 fack = 1
+		r = np.random.binomial(size=batch_size, n=1, p=0.1) # assume real = 0 fack = 1
 		z[:,0] = r
 		return [c,z],[c,r]
 	while True:
