@@ -48,7 +48,7 @@ class NoizyData:
 			noise = np.random.normal(noise_mean, noise_sigma, size=(ax,ay,1)) * noise_scaler
 			dx = np.random.randint(28 - (ax - 1))
 			dy = np.random.randint(28 - (ay - 1))
-			noisy_x[i, dx:dx + ax, dy:dy + ay] += noise
+			x[i, dx:dx + ax, dy:dy + ay] += noise
 
 	def train_batch(self,nreal,nfake):
 		choice = np.random.randint(len(self.x),size = nreal+nfake)

@@ -2,8 +2,8 @@ from Dataset import NoizyData, ZData
 import cv2
 import numpy as np
 
-showD = False
-showG = True
+showD = True
+showG = False
 
 window = 'window'
 cv2.namedWindow(window)
@@ -13,9 +13,9 @@ canvas = np.zeros((280+100,280,1))
 def samples():
 	dataset = NoizyData()
 	while True:
-		im,(c,n) = dataset.train()
+		im,(c,n) = dataset.train_batch(1,1)
 		a = np.arange(len(im))
-		np.random.shuffle(a)
+		#np.random.shuffle(a)
 		for i in a:
 			yield im[i],c[i],n[i]
 
