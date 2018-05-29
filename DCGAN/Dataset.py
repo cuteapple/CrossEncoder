@@ -25,11 +25,13 @@ def ZData(batch_size):
 
 class NoizyData:
 	'''noizy mnist data'''
-	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(7,7)):
+	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(5,5)):
 		noise_mean = 0.0
 
-		ax = noise_area[0]
-		ay = noise_area[1]
+		self.noise_area = noise_area
+		self.noise_scaler = noise_scaler
+		self.noise_sigma = noise_sigma
+
 		(x,y),(tx,ty) = self.load_mnist()
 
 		noisy_x = np.copy(x)
@@ -49,12 +51,23 @@ class NoizyData:
 		self.y = [np.concatenate((y,noisy_y), axis=0), np.concatenate((reals(len(y)),facks(len(noisy_y))), axis=0)]
 		self.tx = tx
 		self.ty = [ty,reals(len(ty))]
+	
+	def addnoise(self,x):
+		noise_mean = 0
+		noise_sigma = self.noise_sigma
+		noise_scaler = self.noise_scaler
+		noise_area = self.noise_area
 
-	def train_batch(self):
-		...
+		ax,ay = noise_area
 
-	def train(self):
-		return self.x,self.y
+		for i in range(len(x)):
+			noise = np.random.normal(noise_mean, noise_sigma, size=(ax,ay,1)) * noise_scaler
+			dx = np.random.randint(28 - (ax - 1))
+			dy = np.random.randint(28 - (ay - 1))
+			noisy_x[i, dx:dx + ax, dy:dy + ay] += noise
+
+	def train_batch(self,nreal,nfake):
+		creal = np.random.randint(len(self.x),size = nreal+nfake)
 
 	def test(self):
 		return self.tx,self.ty
