@@ -50,6 +50,9 @@ class NoizyData:
 		self.tx = tx
 		self.ty = [ty,reals(len(ty))]
 
+	def train_batch(self):
+		...
+
 	def train(self):
 		return self.x,self.y
 
