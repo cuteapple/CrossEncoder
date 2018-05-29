@@ -35,6 +35,7 @@ class NoizyData:
 
 		self.x = x
 		self.y = y
+		self.r = reals(len(y))
 	
 	def addnoise(self,x):
 		noise_mean = self.noise_mean
@@ -60,7 +61,7 @@ class NoizyData:
 		return x,[y,r]
 	
 	def test(self):
-		return self.x, self.y
+		return self.x,[self.y, self.r]
 
 	@staticmethod
 	def transform(x):

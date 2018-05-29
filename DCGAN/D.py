@@ -59,12 +59,20 @@ if __name__ == "__main__":
 	
 	print('prepare data ...')
 	data = NoizyData()
-	
+	def g():
+		nreal,nfake = args.batch_size//2, args.batch_size//2
+		while True:
+			yield data.train_batch(nreal,nfake)
+
 	print('training ... ')
 	d.compile(optimizer='adadelta', loss='mse', metrics=['accuracy'])
 	
-	x,y = data.train()
-	d.fit(x,y, batch_size=args.batch_size, epochs=args.epochs, validation_data=data.test())
-
+	d.fit_generator(
+		g(),
+		steps_per_epoch = len(data.x) // args.batch_size,
+		validation_data = data.test(),
+		epochs=args.epochs
+		)
+	
 	print('saving ...')
 	d.save_weights(args.path)
