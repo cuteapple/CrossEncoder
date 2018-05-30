@@ -75,7 +75,7 @@ if __name__ == '__main__':
 	repoch = 10
 	while epoch <= args.epochs:
 
-		m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'],loss_weights=[10,0])
+		m.compile(optimizer='adadelta',loss='mse',metrics=['mse'],loss_weights=[10,0])
 		x,y = next(z)
 		m.fit_generator(z,
 			steps_per_epoch = args.steps,
@@ -84,7 +84,7 @@ if __name__ == '__main__':
 			)
 		epoch += cepoch
 
-		m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'],loss_weights=[0,10])
+		m.compile(optimizer='adadelta',loss='mse',metrics=['mse'],loss_weights=[0,10])
 		x,y = next(z)
 		m.fit_generator(z,
 			steps_per_epoch = args.steps,

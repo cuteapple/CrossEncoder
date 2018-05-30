@@ -65,7 +65,7 @@ if __name__ == "__main__":
 			yield data.train_batch(nreal,nfake)
 
 	print('training ... ')
-	d.compile(optimizer='adadelta', loss='mse', metrics=['accuracy'])
+	d.compile(optimizer='adadelta', loss='mse', metrics=['mae','accuracy'])
 	
 	d.fit_generator(
 		g(),
