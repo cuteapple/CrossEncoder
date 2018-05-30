@@ -74,7 +74,6 @@ if __name__ == '__main__':
 	cepoch = 10
 	repoch = 10
 	while epoch <= args.epochs:
-		print(epoch ,'/', args.epochs)
 
 		m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'],loss_weights=[10,0])
 		x,y = next(z)
