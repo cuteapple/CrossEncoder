@@ -43,7 +43,7 @@ if __name__ == '__main__':
 	
 	import argparse
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-e","--epochs", default=100, type=int)
+	parser.add_argument("-e","--epochs", default=200, type=int)
 	parser.add_argument("-s","--steps", default=64, type=int)
 	parser.add_argument("-b","--batch-size", default=128, type=int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)
@@ -66,12 +66,33 @@ if __name__ == '__main__':
 	print('linking G & D ...')
 	input = [Input((Dataset.nclass,)),Input((Dataset.nnoise,))]
 	m = Model(input, d(g(input)))
-	m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'],loss_weights=[10,1])
 
 	print('training ...')
-	m.fit_generator(z(args.batch_size),
-		steps_per_epoch = args.steps,
-		epochs=args.epochs)
+	
+	z = Dataset.ZData(args.batch_size)
+	epoch = 1
+	cepoch = 10
+	repoch = 10
+	while epoch <= args.epochs:
+		print(epoch ,'/', args.epochs)
+
+		m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'],loss_weights=[10,0])
+		x,y = next(z)
+		m.fit_generator(z,
+			steps_per_epoch = args.steps,
+			epochs=cepoch,
+			initial_epoch=epoch
+			)
+		epoch += cepoch
+
+		m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'],loss_weights=[0,10])
+		x,y = next(z)
+		m.fit_generator(z,
+			steps_per_epoch = args.steps,
+			epochs=repoch,
+			initial_epoch=epoch
+			)
+		epoch += repoch
 
 	print('saving ...')
 	g.save_weights(args.path)
