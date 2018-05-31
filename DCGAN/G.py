@@ -45,7 +45,7 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-e","--epochs", default=200, type=int)
 	parser.add_argument("-s","--steps", default=64, type=int)
-	parser.add_argument("-b","--batch-size", default=128, type=int)
+	parser.add_argument("-b","--batch-size", default=32, type=int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)
 	parser.add_argument("-dp","--discriminator-path", default="D.h5", type=str)
 	args = parser.parse_args()
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 		x,y = next(z)
 		m.fit_generator(z,
 			steps_per_epoch = args.steps,
-			epochs=cepoch,
+			epochs=epoch+cepoch,
 			initial_epoch=epoch
 			)
 		epoch += cepoch
@@ -88,7 +88,7 @@ if __name__ == '__main__':
 		x,y = next(z)
 		m.fit_generator(z,
 			steps_per_epoch = args.steps,
-			epochs=repoch,
+			epochs=epoch+repoch,
 			initial_epoch=epoch
 			)
 		epoch += repoch
