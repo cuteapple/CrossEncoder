@@ -12,6 +12,7 @@ def image():
 			canvas[:h,i * w:i * w + w] = cv2.resize(im,(h,w),interpolation=cv2.INTER_NEAREST).reshape(h,w,1)
 		for i,im in enumerate(data[5:10]):
 			canvas[h:,i * w:i * w + w] = cv2.resize(im,(h,w),interpolation=cv2.INTER_NEAREST).reshape(h,w,1)
+		print(label)
 		yield canvas
 
 images = image()

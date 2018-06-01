@@ -1,5 +1,6 @@
 import keras
 import numpy as np
+import Dataset
 
 def new_G(input_length):
 	
@@ -32,50 +33,40 @@ if __name__ == '__main__':
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-e","--epochs", default = 200, type = int)
-	parser.add_argument("-s","--steps", default=64, type=int)
+	parser.add_argument("-s","--steps", default = 64, type=int)
 	parser.add_argument("-b","--batch-size", default = 32, type = int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)
-	parser.add_argument("-dp","--discriminator-path", default = "D.h5", type = str)
 	args = parser.parse_args()
 	print('args :',args)
 	
 	print('loading D ...')
-	d = D.new_D()
-	d.load_weights(args.discriminator_path)
+	dn = keras.models.load_model('noisy.h5')
+	dn.trainable = False
+	#load other d ...
+	i = keras.layers.Input((28,28,1))
+	d = keras.models.Model(i,dn(i),name='D')
 	d.trainable = False
 
 	print('loading G ...')
-	g = new_G(Dataset.nclass,Dataset.nnoise)
-	try: g.load_weights(args.path)
-	except: print('failed')
-	else: print('success')
+	try: 
+		g = keras.models.load_model(args.path)
+	except:
+		print('failed')
+		g = new_G(10)
+	else:
+	   print('success')
 
 
 	print('linking G & D ...')
-	input = [Input((Dataset.nclass,)),Input((Dataset.nnoise,))]
-	m = Model(input, d(g(input)))
+	input = keras.layers.Input(10)
+	model = keras.models.Model(input, d(g(input)))
+	model.compile(optimizer='adadelta',loss='mse',loss_weights=[1])
 
 	print('training ...')
-	
-	z = Dataset.ZData(args.batch_size)
-	epoch = 1
-	cepoch = 10
-	repoch = 10
-	while epoch <= args.epochs:
-		
-		m.compile(optimizer='adadelta',loss='mse',metrics=['mse'],loss_weights=[1,10])
-		x,y = next(z)
-		m.fit_generator(z,
-			steps_per_epoch = args.steps,
-			epochs=repoch)
-		epoch += repoch
-
-		m.compile(optimizer='adadelta',loss='mse',metrics=['mse'],loss_weights=[10,1])
-		x,y = next(z)
-		m.fit_generator(z,
-			steps_per_epoch = args.steps,
-			epochs=cepoch)
-		epoch += cepoch
+	z = Dataset.ZData(args.batch_size,10)
+	m.fit_generator(z,
+		steps_per_epoch = args.steps,
+		epochs=args.epochs)
 
 	print('saving ...')
-	g.save_weights(args.path)
+	g.save(args.path)

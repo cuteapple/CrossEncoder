@@ -30,14 +30,12 @@ def add_noise(images,scalar=1,mean=0,sigma=0.5):
 		dy = np.random.randint(0, y - (ay - 1))
 		images[i, dx:dx + ax, dy:dy + ay] += noise
 
-
-def ZData(batch_size):
-	#r = reals(batch_size)
+def ZData(batch_size,nnoise):
 	def g():
-		c = np.eye(nclass)[np.random.choice(nclass,batch_size)]
+		#c = np.eye(nclass)[np.random.choice(nclass,batch_size)]
 		z = np.random.normal(size=(batch_size,nnoise))
-		r = np.random.binomial(size=batch_size, n=1, p=0.1) # assume real = 0 fack = 1
-		z[:,0] = r
-		return [c,z],[c,r]
+		#r = np.random.binomial(size=batch_size, n=1, p=0.1) # assume real = 0 fack = 1
+		r = reals(batch_size)
+		return z,r
 	while True:
 		yield g()
