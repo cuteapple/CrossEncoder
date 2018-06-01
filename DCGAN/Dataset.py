@@ -1,6 +1,16 @@
 import keras
 import numpy as np
 
+def load_mnist():
+	'''load mnist, normalize x, categorical y, return (x,y),(tx,ty)'''
+	from keras.datasets import mnist
+	(x, y), (tx, ty) = mnist.load_data()
+	x = x.astype('float32').reshape(-1,28,28,1) / 255
+	tx = x.astype('float32').reshape(-1,28,28,1) / 255
+	y = keras.utils.to_categorical(y_train, nclass)
+	ty = keras.utils.to_categorical(y_test, nclass)
+	return (x_train,y_train),(x_test,y_test)
+
 nclass = 10
 nnoise = 10
 real_value = 0

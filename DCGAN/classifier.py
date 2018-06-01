@@ -1,10 +1,10 @@
 import keras
 import numpy as np
-from Dataset import NoizyData
+import Dataset
 
 def new_model():
 	from keras.models import Sequential,Model
-	from keras.layers import Conv2D,Flatten,Dense,Dropout,MaxPooling2D,LeakyReLU,Softmax
+	from keras.layers import Conv2D,Flatten,Dense,Dropout,LeakyReLU
 	return Sequential(name='class',
 		layers=[Conv2D(32, kernel_size=3, strides=1, padding='same', input_shape=(28,28,1)),
 			LeakyReLU(),
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 		print('success')
 	
 	print('prepare data ...')
-	x,y,_ = NoizyData.load_mnist()
+	x,y,_ = Dataset.load_mnist()
 
 	print('training ... ')
 	dc.fit(x,y,batch_size=args.batch_size, epochs = args.epochs)
