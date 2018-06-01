@@ -43,7 +43,7 @@ if __name__ == "__main__":
 		print('success')
 	
 	print('prepare data ...')
-	x,y,_ = Dataset.load_mnist()
+	(x,y),_ = Dataset.load_mnist()
 
 	print('training ... ')
 	dc.fit(x,y,batch_size=args.batch_size, epochs = args.epochs)
