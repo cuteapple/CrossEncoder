@@ -27,23 +27,26 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-e","--epochs", default=200, type=int)
 	parser.add_argument("-b","--batch_size", default=128, type=int)
-	parser.add_argument("-p","--path", default="DC.h5", type=str)
+	parser.add_argument("-p","--path", default="classifier.h5", type=str)
 	args = parser.parse_args()
 	print('args',args)
 
-	dc = new_model()
 	
 	print('loading weights at {} ... '.format(args.path), end = '')
-	try: dc.load_weights(args.path)
-	except: print('fail')
-	else: print('success')
+	try: 
+		dc = keras.models.load_model(args.path)
+	except:
+		print('fail')
+		dc = new_model()
+		dc.compile(optimizer='adadelta', loss='categorical_crossentropy', metrics=['accuracy'])
+	else:
+		print('success')
 	
 	print('prepare data ...')
 	x,y,_ = NoizyData.load_mnist()
 
 	print('training ... ')
-	dc.compile(optimizer='adadelta', loss='categorical_crossentropy', metrics=['accuracy'])
 	dc.fit(x,y,batch_size=args.batch_size, epochs = args.epochs)
 	
 	print('saving ...')
-	dc.save_weights(args.path)
+	dc.save(args.path)
