@@ -7,8 +7,8 @@ def load_mnist():
 	(x, y), (tx, ty) = mnist.load_data()
 	x = x.astype('float32').reshape(-1,28,28,1) / 255
 	tx = x.astype('float32').reshape(-1,28,28,1) / 255
-	y = keras.utils.to_categorical(y_train, nclass)
-	ty = keras.utils.to_categorical(y_test, nclass)
+	y = keras.utils.to_categorical(y, nclass)
+	ty = keras.utils.to_categorical(ty, nclass)
 	return (x_train,y_train),(x_test,y_test)
 
 nclass = 10
