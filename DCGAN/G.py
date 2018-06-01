@@ -1,53 +1,41 @@
 import keras
 import numpy as np
-import D
-from Dataset import ZData as z
-import Dataset
 
-from keras.models import Sequential,Model
-from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input,Concatenate
-from keras_contrib.layers.normalization import InstanceNormalization
-
-def new_G(nclass,nnoise):
-
-	i_c = Input((nclass,),name='class')
-	i_n = Input((nnoise,),name='noise')
-	i = Concatenate()([i_c,i_n])
-
-	gen = Sequential(name='gen',
-		layers=[
-			Dense(128 * 7 * 7,input_shape=(nclass+nnoise,)),
-			Activation("relu"),
+def new_G(input_length):
+	
+	from keras.models import Sequential,Model
+	from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,LeakyReLU
+	from keras_contrib.layers.normalization import InstanceNormalization
+	return Sequential(name='G',
+		layers=[Dense(128 * 7 * 7,input_shape=(input_length,)),
+			LeakyReLU(),
 			InstanceNormalization(),
 			Reshape((7, 7, 128)),
 			UpSampling2D(),
 			Conv2D(128, kernel_size=3, padding="same"),
-			Activation("relu"),
+			LeakyReLU(),
 			InstanceNormalization(),
 			Conv2D(128, kernel_size=3, padding="same"),
-			Activation("relu"),
+			LeakyReLU(),
 			InstanceNormalization(),
 			UpSampling2D(),
 			Conv2D(64, kernel_size=3, padding="same"),
-			Activation("relu"),
+			LeakyReLU(),
 			InstanceNormalization(),
 			Conv2D(64, kernel_size=3, padding="same"),
-			Activation("relu"),
+			LeakyReLU(),
 			InstanceNormalization(),
-			Conv2D(1, kernel_size=3, padding="same"),
-			Activation("sigmoid")])
-	
-	return Model([i_c,i_n],gen(i),name='G')
+			Conv2D(1, kernel_size=3, padding="same",activation='sigmoid')])
 
 if __name__ == '__main__':
 	
 	import argparse
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-e","--epochs", default=200, type=int)
+	parser.add_argument("-e","--epochs", default = 200, type = int)
 	parser.add_argument("-s","--steps", default=64, type=int)
-	parser.add_argument("-b","--batch-size", default=32, type=int)
+	parser.add_argument("-b","--batch-size", default = 32, type = int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)
-	parser.add_argument("-dp","--discriminator-path", default="D.h5", type=str)
+	parser.add_argument("-dp","--discriminator-path", default = "D.h5", type = str)
 	args = parser.parse_args()
 	print('args :',args)
 	
@@ -79,16 +67,14 @@ if __name__ == '__main__':
 		x,y = next(z)
 		m.fit_generator(z,
 			steps_per_epoch = args.steps,
-			epochs=repoch
-			)
+			epochs=repoch)
 		epoch += repoch
 
 		m.compile(optimizer='adadelta',loss='mse',metrics=['mse'],loss_weights=[10,1])
 		x,y = next(z)
 		m.fit_generator(z,
 			steps_per_epoch = args.steps,
-			epochs=cepoch
-			)
+			epochs=cepoch)
 		epoch += cepoch
 
 	print('saving ...')
