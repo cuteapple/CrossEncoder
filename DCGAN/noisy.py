@@ -59,7 +59,7 @@ if __name__ == "__main__":
 	print('prepare data ...')
 	
 	nb = args.batch_size
-	nn = nb * args.noisy_batch_ratio
+	nn = int(nb * args.noisy_batch_ratio)
 	nr = nb - nn
 	g = data_generator(nr,nn)
 
