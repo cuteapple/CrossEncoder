@@ -36,6 +36,7 @@ if __name__ == '__main__':
 	parser.add_argument("-s","--steps", default = 64, type=int)
 	parser.add_argument("-b","--batch-size", default = 32, type = int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)
+	parser.add_argument("-mp","--model-path", default="M.h5", type=str)
 	args = parser.parse_args()
 	print('args :',args)
 	
@@ -64,9 +65,10 @@ if __name__ == '__main__':
 
 	print('training ...')
 	z = Dataset.ZData(args.batch_size,10)
-	m.fit_generator(z,
+	model.fit_generator(z,
 		steps_per_epoch = args.steps,
 		epochs=args.epochs)
 
 	print('saving ...')
 	g.save(args.path)
+	model.save(args.model_path)
