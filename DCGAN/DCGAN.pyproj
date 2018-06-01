@@ -33,6 +33,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="G.py" />
+    <Compile Include="noizy.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="sample_NoisyData.py" />
     <Compile Include="test_G.py" />
   </ItemGroup>
