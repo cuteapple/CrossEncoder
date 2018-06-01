@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
 
 	print('linking G & D ...')
-	input = keras.layers.Input(10)
+	input = keras.layers.Input((10,))
 	model = keras.models.Model(input, d(g(input)))
 	model.compile(optimizer='adadelta',loss='mse',loss_weights=[1])
 
