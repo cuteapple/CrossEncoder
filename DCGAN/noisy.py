@@ -32,7 +32,7 @@ def new_model():
 			LeakyReLU(),
 			Dropout(0.25),
 			Flatten(),
-			Dense(1,activation='sigmoid')])
+			Dense(1)])
 
 if __name__ == "__main__":
 
