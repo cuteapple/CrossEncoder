@@ -18,7 +18,7 @@ def load_mnist():
 	ty = keras.utils.to_categorical(ty, nclass)
 	return (x,y),(tx,ty)
 
-def add_noise(images,scalar=0.5,mean=0,sigma=0.5):
+def add_noise(images,scalar=1,mean=0,sigma=0.5):
 	'''add random block of gaussian noise inplace'''
 	x,y,deep = images.shape[1:]
 

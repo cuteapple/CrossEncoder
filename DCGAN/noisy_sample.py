@@ -18,6 +18,7 @@ images = image()
 
 window = 'noisy'
 cv2.namedWindow(window)
+cv2.imshow(window,next(images))
 while cv2.getWindowProperty(window, 0) >= 0:
 	k = cv2.waitKey(33) & 0xFF
 	if k == ord(' '):
