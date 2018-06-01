@@ -18,7 +18,7 @@ def load_mnist():
 	ty = keras.utils.to_categorical(ty, nclass)
 	return (x,y),(tx,ty)
 
-def add_noise(self,images,scalar=0.5,mean=0,sigma=0.5):
+def add_noise(images,scalar=0.5,mean=0,sigma=0.5):
 	'''add random block of gaussian noise inplace'''
 	x,y,deep = images.shape[1:]
 
@@ -28,7 +28,7 @@ def add_noise(self,images,scalar=0.5,mean=0,sigma=0.5):
 		noise = np.random.normal(mean, sigma, size=(ax,ay,deep)) * scalar
 		dx = np.random.randint(0, x - (ax - 1))
 		dy = np.random.randint(0, y - (ay - 1))
-		x[i, dx:dx + ax, dy:dy + ay] += noise
+		images[i, dx:dx + ax, dy:dy + ay] += noise
 
 
 def ZData(batch_size):
