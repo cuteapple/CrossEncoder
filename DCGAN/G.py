@@ -74,24 +74,22 @@ if __name__ == '__main__':
 	cepoch = 10
 	repoch = 10
 	while epoch <= args.epochs:
-
-		m.compile(optimizer='adadelta',loss='mse',metrics=['mse'],loss_weights=[10,0])
+		
+		m.compile(optimizer='adadelta',loss='mse',metrics=['mse'],loss_weights=[1,10])
 		x,y = next(z)
 		m.fit_generator(z,
 			steps_per_epoch = args.steps,
-			epochs=epoch+cepoch,
-			initial_epoch=epoch
-			)
-		epoch += cepoch
-
-		m.compile(optimizer='adadelta',loss='mse',metrics=['mse'],loss_weights=[0,10])
-		x,y = next(z)
-		m.fit_generator(z,
-			steps_per_epoch = args.steps,
-			epochs=epoch+repoch,
-			initial_epoch=epoch
+			epochs=repoch,
 			)
 		epoch += repoch
+
+		m.compile(optimizer='adadelta',loss='mse',metrics=['mse'],loss_weights=[10,1])
+		x,y = next(z)
+		m.fit_generator(z,
+			steps_per_epoch = args.steps,
+			epochs=cepoch,
+			)
+		epoch += cepoch
 
 	print('saving ...')
 	g.save_weights(args.path)
