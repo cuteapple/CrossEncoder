@@ -79,7 +79,7 @@ if __name__ == '__main__':
 		x,y = next(z)
 		m.fit_generator(z,
 			steps_per_epoch = args.steps,
-			epochs=repoch,
+			epochs=repoch
 			)
 		epoch += repoch
 
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 		x,y = next(z)
 		m.fit_generator(z,
 			steps_per_epoch = args.steps,
-			epochs=cepoch,
+			epochs=cepoch
 			)
 		epoch += cepoch
 
