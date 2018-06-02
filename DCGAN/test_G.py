@@ -18,8 +18,14 @@ except:
 	pass
 
 g = keras.models.load_model(args.path)
-z,y = next(Dataset.ZData(100,g.layers[0].input_shape[1]))
-p = g.predict(z)
+i_noise = keras.layers.Input((10,),name='i_noise')
+i_class = keras.layers.Input((Dataset.nclass,),name='i_class')
+input = keras.layers.concatenate([i_noise,i_class])
+model = keras.models.Model([i_noise,i_class], [g(input)])
+
+z,y = next(Dataset.ZData(100))
+y=y['o_class']
+p = model.predict(z)
 
 sample = [np.zeros((28,28))]*10
 

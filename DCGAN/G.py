@@ -49,6 +49,7 @@ if __name__ == '__main__':
 
 	print('loading G ...')
 	try:
+		from keras_contrib import *
 		g = keras.models.load_model(args.path)
 	except:
 		print('failed')
