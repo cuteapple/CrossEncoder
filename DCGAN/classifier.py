@@ -46,7 +46,7 @@ if __name__ == "__main__":
 	except:
 		print('fail')
 		dc = new_model()
-		dc.compile(optimizer='adadelta', loss='categorical_crossentropy', metrics=['accuracy'])
+		dc.compile(optimizer='adadelta', loss='mse', metrics=['accuracy'])
 	else:
 		print('success')
 	
