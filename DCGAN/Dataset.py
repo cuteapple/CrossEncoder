@@ -2,7 +2,7 @@ import keras
 import numpy as np
 
 nclass = 10
-
+nnoise = 10
 reals = np.ones
 facks = np.zeros
 real_value = 1
@@ -30,12 +30,12 @@ def add_noise(images,scalar=1,mean=0,sigma=0.5):
 		dy = np.random.randint(0, y - (ay - 1))
 		images[i, dx:dx + ax, dy:dy + ay] += noise
 
-def ZData(batch_size,nnoise):
+def ZData(batch_size):
 	def g():
-		#c = np.eye(nclass)[np.random.choice(nclass,batch_size)]
+		c = np.eye(nclass)[np.random.choice(nclass,batch_size)]
 		z = np.random.normal(size=(batch_size,nnoise))
 		#r = np.random.binomial(size=batch_size, n=1, p=0.1) # assume real = 0 fack = 1
 		r = reals(batch_size)
-		return z,r
+		return {'i_class':c,'i_noise':z},{'o_class':c}
 	while True:
 		yield g()

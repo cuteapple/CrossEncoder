@@ -2,8 +2,7 @@ import keras
 import numpy as np
 import Dataset
 
-def new_G(input_length):
-	
+def new_G(input_length):	
 	from keras.models import Sequential,Model
 	from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,LeakyReLU
 	from keras_contrib.layers.normalization import InstanceNormalization
@@ -41,35 +40,39 @@ if __name__ == '__main__':
 	print('args :',args)
 	
 	print('loading D ...')
-	dn = keras.models.load_model('noisy.h5')
-	dn.trainable = False
+	#dn = keras.models.load_model('noisy.h5')
+	#dn.trainable = False
+	dc = keras.models.load_model('classifier.h5')
+	dc.trainable = False
+	dc.name = 'o_class'
 	#load other d ...
-	i = keras.layers.Input((28,28,1))
-	d = keras.models.Model(i,dn(i),name='D')
-	d.trainable = False
 
 	print('loading G ...')
 	try:
-		from keras_contrib import *
 		g = keras.models.load_model(args.path)
 	except:
 		print('failed')
-		g = new_G(10)
+		g = new_G(Dataset.nnoise + Dataset.nclass)
 	else:
 	   print('success')
 
-
+	print('prepare data ...')
+	z = Dataset.ZData(args.batch_size)
+	
 	print('linking G & D ...')
-	input = keras.layers.Input((10,))
-	model = keras.models.Model(input, d(g(input)))
+	
+	i_noise = keras.layers.Input((10,),name='i_noise')
+	i_class = keras.layers.Input((Dataset.nclass,),name='i_class')
+	input = keras.layers.concatenate([i_noise,i_class])
+	model = keras.models.Model([i_noise,i_class], [dc(g(input))])
 	model.compile(optimizer='adadelta',loss='mse',loss_weights=[1])
 
 	print('training ...')
-	z = Dataset.ZData(args.batch_size,10)
+	
 	model.fit_generator(z,
 		steps_per_epoch = args.steps,
 		epochs=args.epochs)
-
+		
 	print('saving ...')
 	g.save(args.path)
 	#model.save(args.model_path)
