@@ -40,11 +40,12 @@ if __name__ == '__main__':
 	print('args :',args)
 	
 	print('loading D ...')
-	#dn = keras.models.load_model('noisy.h5')
-	#dn.trainable = False
-	dc = keras.models.load_model('classifier.h5')
-	dc.trainable = False
-	dc.name = 'o_class'
+	dn = keras.models.load_model('noisy.h5')
+	dn.trainable = False
+	dn.name = 'o_noise'
+	#dc = keras.models.load_model('classifier.h5')
+	#dc.trainable = False
+	#dc.name = 'o_class'
 	#load other d ...
 
 	print('loading G ...')
@@ -62,10 +63,10 @@ if __name__ == '__main__':
 	
 	print('linking G & D ...')
 	
-	i_noise = keras.layers.Input((10,),name='i_noise')
+	i_noise = keras.layers.Input((Dataset.nnoise,),name='i_noise')
 	i_class = keras.layers.Input((Dataset.nclass,),name='i_class')
 	input = keras.layers.concatenate([i_noise,i_class])
-	model = keras.models.Model([i_noise,i_class], [dc(g(input))])
+	model = keras.models.Model([i_noise,i_class], [dn(g(input))])
 	model.compile(optimizer='adadelta',loss='mse',loss_weights=[1])
 
 	print('training ...')

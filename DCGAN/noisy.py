@@ -6,7 +6,7 @@ def data_generator(nreal,nnoisy):
 	nbatch = nreal + nnoisy
 	(x,_),_ = Dataset.load_mnist()
 	y = Dataset.reals(nbatch)
-	y[:nnoisy] = Dataset.fack_value
+	y[:nnoisy] = Dataset.noizy_value
 	def impl():
 		index = np.random.randint(len(x),size=nbatch)
 		target = x[index]
