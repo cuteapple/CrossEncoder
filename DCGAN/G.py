@@ -36,7 +36,7 @@ if __name__ == '__main__':
 	parser.add_argument("-s","--steps", default = 64, type=int)
 	parser.add_argument("-b","--batch-size", default = 32, type = int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)
-	parser.add_argument("-mp","--model-path", default="M.h5", type=str)
+	#parser.add_argument("-mp","--model-path", default="M.h5", type=str)
 	args = parser.parse_args()
 	print('args :',args)
 	
@@ -49,7 +49,8 @@ if __name__ == '__main__':
 	d.trainable = False
 
 	print('loading G ...')
-	try: 
+	try:
+		from keras_contrib import *
 		g = keras.models.load_model(args.path)
 	except:
 		print('failed')
@@ -71,4 +72,4 @@ if __name__ == '__main__':
 
 	print('saving ...')
 	g.save(args.path)
-	model.save(args.model_path)
+	#model.save(args.model_path)

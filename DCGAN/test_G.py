@@ -1,6 +1,8 @@
-import G
+import keras
+from keras_contrib import *
 import numpy as np
 import os
+import Dataset
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -15,17 +17,16 @@ try:
 except:
 	pass
 
-g = G.new_G(10,10)
-g.load_weights(args.path)
-
-z,(y,_) = next(G.z(100))
+g = keras.models.load_model(args.path)
+z,y = next(Dataset.ZData(100,g.layers[0].input_shape[1]))
 p = g.predict(z)
 
 sample = [np.zeros((28,28))]*10
 
 import cv2
 for i,(p,y) in enumerate(zip(p,y)):
-	y = int(np.dot(y[:10],np.arange(10)))
+	#y = int(np.dot(y[:10],np.arange(10)))
+	y = 1
 	p = p.reshape(28,28)*255
 	sample[y] = p
 	cv2.imwrite('{}/{}-{}.png'.format(o,y,i),p)
