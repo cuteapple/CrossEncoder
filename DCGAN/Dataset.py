@@ -35,7 +35,7 @@ def ZData(batch_size):
 		c = np.eye(nclass)[np.random.choice(nclass,batch_size)]
 		z = np.random.normal(size=(batch_size,nnoise))
 		#r = np.random.binomial(size=batch_size, n=1, p=0.1) # assume real = 0 fack = 1
-		n = noizys(batch_size)
+		n = reals(batch_size)
 		return {'i_class':c,'i_noise':z},{'o_class':c,'o_noise':n}
 	while True:
 		yield g()
