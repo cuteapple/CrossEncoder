@@ -2,7 +2,7 @@ this repo contains multiple test of GAN
 
 it's not well orgnized, code is neither pretty, nor clean
 
-this repo contains multiple project seperate by tag (usually also directory)
+this repo contains multiple project
 
 [//]: # (if you think you have some question, feel free to post an issue. not prepared yet :P )
 
