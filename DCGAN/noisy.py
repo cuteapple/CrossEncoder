@@ -17,18 +17,22 @@ def data_generator(nreal,nnoisy):
 
 def new_model():
 	from keras.models import Sequential,Model
-	from keras.layers import Conv2D,Flatten,Dense,Dropout,LeakyReLU
+	from keras.layers import Conv2D,Flatten,Dense,Dropout,LeakyReLU,BatchNormalization
 	return Sequential(name='noisy',
 		layers=[Conv2D(32, kernel_size=3, strides=1, padding='same', input_shape=(28,28,1)),
+			BatchNormalization(),
 			LeakyReLU(),
 			Dropout(0.25),
 			Conv2D(64, kernel_size=3, strides=2,padding='same'),
+			BatchNormalization(),
 			LeakyReLU(),
 			Dropout(0.25),
 			Conv2D(128, kernel_size=3, strides=2, padding='same'),
+			BatchNormalization(),
 			LeakyReLU(),
 			Dropout(0.25),
 			Conv2D(256, kernel_size=3, strides=2, padding='same'),
+			BatchNormalization(),
 			LeakyReLU(),
 			Dropout(0.25),
 			Flatten(),

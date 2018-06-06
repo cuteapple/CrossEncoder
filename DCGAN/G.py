@@ -4,27 +4,31 @@ import Dataset
 
 def new_G(input_length):	
 	from keras.models import Sequential,Model
-	from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,LeakyReLU
-	from keras_contrib.layers.normalization import InstanceNormalization
+	from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,LeakyReLU,BatchNormalization
 	return Sequential(name='G',
-		layers=[Dense(128 * 7 * 7,input_shape=(input_length,)),
+		layers=[Dense(128 * 3 * 3,input_shape=(input_length,)),
+			BatchNormalization(),
 			LeakyReLU(),
-			InstanceNormalization(),
+			Dense(128 * 7 * 7),
+			BatchNormalization(),
+			LeakyReLU(),
 			Reshape((7, 7, 128)),
+
 			UpSampling2D(),
 			Conv2D(128, kernel_size=3, padding="same"),
+			BatchNormalization(),
 			LeakyReLU(),
-			InstanceNormalization(),
 			Conv2D(128, kernel_size=3, padding="same"),
+			BatchNormalization(),
 			LeakyReLU(),
-			InstanceNormalization(),
+
 			UpSampling2D(),
 			Conv2D(64, kernel_size=3, padding="same"),
+			BatchNormalization(),
 			LeakyReLU(),
-			InstanceNormalization(),
 			Conv2D(64, kernel_size=3, padding="same"),
+			BatchNormalization(),
 			LeakyReLU(),
-			InstanceNormalization(),
 			Conv2D(1, kernel_size=3, padding="same",activation='sigmoid')])
 
 if __name__ == '__main__':
