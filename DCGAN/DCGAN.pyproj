@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{94a5bbb7-9d61-4a3f-bc62-e50d8f4c4048}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>G.py</StartupFile>
+    <StartupFile>D.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -23,9 +23,6 @@
     <Compile Include="Dataset.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="classifier.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="demo.py">
       <SubType>Code</SubType>
     </Compile>
@@ -33,9 +30,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="G.py" />
-    <Compile Include="noisy.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="noisy_sample.py" />
     <Compile Include="test_G.py" />
   </ItemGroup>
