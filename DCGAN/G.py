@@ -40,7 +40,7 @@ if __name__ == '__main__':
 	print('args :',args)
 	
 	print('loading D ...')
-	dn = keras.models.load_model('noisy.h5')
+	dn = keras.models.load_model('D.h5')
 	dn.trainable = False
 	dn.name = 'o_noise'
 	dc = keras.models.load_model('classifier.h5')
