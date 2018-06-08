@@ -2,6 +2,21 @@ import keras
 import numpy as np
 import Dataset
 
+def data(batch_size,batch_noise_ratio,scale_y):
+	(ox,oy),_ = Dataset.load_mnist()
+	b = batch_size
+	bn = int(b*batch_noise_ratio)
+	def g():
+		choice = np.random.randint(len(ox),size=args.batch_size)
+		x = ox[choice]
+		y = oy[choice]
+		Dataset.add_noise(x[:bn])
+		y[:bn] *= scale_y
+		return x,y
+	
+	while True:
+		yield g()
+
 def D():
 	from keras.models import Sequential,Model
 	from keras.layers import Conv2D,Flatten,Dense,Dropout,LeakyReLU
@@ -52,23 +67,9 @@ if __name__ == "__main__":
 	
 	print('prepare data ...')
 
-	(ox,oy),_ = Dataset.load_mnist()
-	b = args.batch_size
-	bn = int(args.batch_size*args.batch_noise_ratio)
-	def data():
-		choice = np.random.randint(len(ox),size=args.batch_size)
-		x = ox[choice]
-		y = oy[choice]
-		Dataset.add_noise(x[:bn])
-		y[:bn] *= args.noisy_y_scalar
-		return x,y
-
-	def data_g():
-		while True:
-			yield data()
-
+	d = data(args.batch_size,args.batch_noise_ratio,args.noisy_y_scalar)
 	print('training ... ')
-	dc.fit_generator(data_g(),steps_per_epoch=128,epochs=args.epochs)
+	dc.fit_generator(d,steps_per_epoch=256,epochs=args.epochs)
 	
 	print('saving ...')
 	dc.save(args.path)

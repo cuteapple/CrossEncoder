@@ -1,13 +1,23 @@
 import keras
 import numpy as np
 import Dataset
+from Dataset import nnoise, nclass
 
-def new_G(input_length):	
+def data(batch_size):
+	x = np.zeros((batch_size,nnoise+nclass))
+	def g():
+		x[:,:nclass] = y = np.eye(nclass)[np.random.choice(nclass,batch_size)]
+		x[:,nclass:] = np.random.normal(size=(batch_size,nnoise))
+		return x,y
+	while True:
+		yield g()
+
+def new_G():	
 	from keras.models import Sequential,Model
 	from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,LeakyReLU
 	from keras_contrib.layers.normalization import InstanceNormalization
 	return Sequential(name='G',
-		layers=[Dense(128 * 7 * 7,input_shape=(input_length,)),
+		layers=[Dense(128 * 7 * 7,input_shape=(nnoise+nclass,)),
 			LeakyReLU(),
 			InstanceNormalization(),
 			Reshape((7, 7, 128)),
@@ -35,19 +45,13 @@ if __name__ == '__main__':
 	parser.add_argument("-s","--steps", default = 64, type=int)
 	parser.add_argument("-b","--batch-size", default = 32, type = int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)
-	#parser.add_argument("-mp","--model-path", default="M.h5", type=str)
 	args = parser.parse_args()
 	print('args :',args)
 	
 	print('loading D ...')
-	dn = keras.models.load_model('D.h5')
-	dn.trainable = False
-	dn.name = 'o_noise'
-	dc = keras.models.load_model('classifier.h5')
-	dc.trainable = False
-	dc.name = 'o_class'
-	#load other d ...
-
+	d = keras.models.load_model('D.h5')
+	d.trainable = False
+	
 	print('loading G ...')
 	try:
 		from keras_contrib import *
@@ -56,25 +60,16 @@ if __name__ == '__main__':
 		print('failed')
 		g = new_G(Dataset.nnoise + Dataset.nclass)
 	else:
-	   print('success')
+		print('success')
 
-	print('prepare data ...')
-	z = Dataset.ZData(args.batch_size)
-	
 	print('linking G & D ...')
-	
-	i_noise = keras.layers.Input((Dataset.nnoise,),name='i_noise')
-	i_class = keras.layers.Input((Dataset.nclass,),name='i_class')
-	input = keras.layers.concatenate([i_noise,i_class])
-	im = g(input)
-	model = keras.models.Model([i_noise,i_class], [dn(im),dc(im)])
-	model.compile(optimizer='adadelta',loss='mse',loss_weights={'o_class':10,'o_noise':1})
+	input = keras.layers.Input((Dataset.nnoise+Dataset.nclass,))
+	model = keras.models.Model(input,d(g(input)))
+	model.compile(optimizer='adadelta',loss='mse')
 
 	print('training ...')
 	
-	model.fit_generator(z,
-		steps_per_epoch = args.steps,
-		epochs=args.epochs)
+	model.fit_generator(data(args.batch_size), steps_per_epoch = args.steps, epochs=args.epochs)
 		
 	print('saving ...')
 	g.save(args.path)
