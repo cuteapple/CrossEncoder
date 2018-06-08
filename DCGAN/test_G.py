@@ -3,6 +3,7 @@ from keras_contrib import *
 import numpy as np
 import os
 import Dataset
+import G
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -18,21 +19,15 @@ except:
 	pass
 
 g = keras.models.load_model(args.path)
-i_noise = keras.layers.Input((10,),name='i_noise')
-i_class = keras.layers.Input((Dataset.nclass,),name='i_class')
-input = keras.layers.concatenate([i_noise,i_class])
-model = keras.models.Model([i_noise,i_class], [g(input)])
 
-z,y = next(Dataset.ZData(100))
-y=y['o_class']
-p = model.predict(z)
+z,y = next(G.data(256))
+p = g.predict(z)
 
 sample = [np.zeros((28,28))]*10
 
 import cv2
 for i,(p,y) in enumerate(zip(p,y)):
 	y = int(np.dot(y[:10],np.arange(10)))
-	#y = 1
 	p = p.reshape(28,28)*255
 	sample[y] = p
 	cv2.imwrite('{}/{}-{}.png'.format(o,y,i),p)
