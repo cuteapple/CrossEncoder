@@ -19,9 +19,15 @@ except:
 	pass
 
 g = keras.models.load_model(args.path)
-
+d = keras.models.load_model('D.h5')
 z,y = next(G.data(256))
 p = g.predict(z)
+c = d.predict(p)
+
+with open("{}/output.txt".format(o), "w") as file:
+	for i,o in zip(z,c):
+		print(f'{[*i]}',file=file)
+		print(f'{[*o]}',file=file)
 
 sample = [np.zeros((28,28))]*10
 
