@@ -58,7 +58,7 @@ if __name__ == '__main__':
 		g = keras.models.load_model(args.path)
 	except:
 		print('failed')
-		g = new_G(Dataset.nnoise + Dataset.nclass)
+		g = new_G()
 	else:
 		print('success')
 
