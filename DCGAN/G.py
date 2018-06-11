@@ -66,7 +66,7 @@ if __name__ == '__main__':
 	print('linking G & D ...')
 	input = keras.layers.Input((Dataset.nnoise+Dataset.nclass,))
 	model = keras.models.Model(input,d(g(input)))
-	model.compile(optimizer='adadelta',loss='mse')
+	model.compile(optimizer='adadelta',loss='mse', metrics=['accuracy'])
 
 	print('training ...')
 	
