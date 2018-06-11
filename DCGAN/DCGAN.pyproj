@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{94a5bbb7-9d61-4a3f-bc62-e50d8f4c4048}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>demo_dataset.py</StartupFile>
+    <StartupFile>statistics-augmented.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -31,6 +31,7 @@
     </Compile>
     <Compile Include="G.py" />
     <Compile Include="noisy_sample.py" />
+    <Compile Include="statistics-augmented.py" />
     <Compile Include="statistics.py">
       <SubType>Code</SubType>
     </Compile>
