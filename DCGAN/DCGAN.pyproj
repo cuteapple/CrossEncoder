@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{94a5bbb7-9d61-4a3f-bc62-e50d8f4c4048}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>G.py</StartupFile>
+    <StartupFile>overlap.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -31,6 +31,9 @@
     </Compile>
     <Compile Include="G.py" />
     <Compile Include="noisy_sample.py" />
+    <Compile Include="overlap.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="test_G.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
