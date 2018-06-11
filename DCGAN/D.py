@@ -7,7 +7,7 @@ def data(batch_size,batch_noise_ratio,scale_y):
 	b = batch_size
 	bn = int(b*batch_noise_ratio)
 	def g():
-		choice = np.random.randint(len(ox),size=args.batch_size)
+		choice = np.random.randint(len(ox),size=batch_size)
 		x = ox[choice]
 		y = oy[choice]
 		Dataset.add_noise(x[:bn])
