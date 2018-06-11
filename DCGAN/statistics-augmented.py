@@ -33,3 +33,10 @@ def S(f,name):
 S(lambda a: np.max(a,axis=0),'aug.max')
 S(lambda a: np.min(a,axis=0),'aug.min')
 S(lambda a: np.mean(a,axis=0),'aug.mean')
+
+canvas = np.zeros((28*4,28*10))
+for a in range(4):
+	for b in range(10):
+		canvas[a*28:(a+1)*28, b*28:(b+1)*28] = x[a*10+b]
+
+cv2.imwrite('statistic/arg.sample.png',canvas)
