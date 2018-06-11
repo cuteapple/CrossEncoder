@@ -30,7 +30,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="G.py" />
-    <Compile Include="noisy_sample.py" />
     <Compile Include="statistics-augmented.py" />
     <Compile Include="statistics.py">
       <SubType>Code</SubType>

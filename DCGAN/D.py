@@ -19,27 +19,20 @@ def data(batch_size,batch_noise_ratio,scale_y):
 
 def D():
 	from keras.models import Sequential,Model
-	from keras.layers import Conv2D,Flatten,Dense,Dropout,LeakyReLU
+	from keras.layers import Conv2D,Flatten,Dense,Dropout,LeakyReLU,Activation
 	return Sequential(name='D',
 		layers=[Conv2D(32, kernel_size=3, strides=1, padding='same', input_shape=(28,28,1)),
-			LeakyReLU(),
+			Activation('relu'),
 			Dropout(0.5),
 			Conv2D(64, kernel_size=3, strides=2,padding='same'),
-			LeakyReLU(),
+			Activation('relu'),
 			Dropout(0.5),
-			Conv2D(128, kernel_size=3, strides=2, padding='same'),
-			LeakyReLU(),
-			Dropout(0.5),
-			Conv2D(256, kernel_size=3, strides=2, padding='same'),
-			LeakyReLU(),
-			Dropout(0.5),
-			Conv2D(256, kernel_size=3, strides=1, padding='same'),
-			LeakyReLU(),
 			Flatten(),
-			Dense(2048),
-			LeakyReLU(),
-			Dense(1024),
-			LeakyReLU(),
+			Dense(256),
+			Activation('relu'),
+			Dropout(0.5),
+			Dense(256),
+			Activation('relu'),
 			Dense(10)])
 
 if __name__ == "__main__":
@@ -61,7 +54,7 @@ if __name__ == "__main__":
 	except:
 		print('fail')
 		dc = D()
-		dc.compile(optimizer='adadelta', loss='mse')
+		dc.compile(optimizer='adadelta', loss='mse', metrics=['accuracy'])
 	else:
 		print('success')
 	

@@ -14,28 +14,29 @@ def data(batch_size):
 
 def new_G():	
 	from keras.models import Sequential,Model
-	from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,LeakyReLU
+	from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation
 	from keras_contrib.layers.normalization import InstanceNormalization
 	return Sequential(name='G',
 		layers=[Dense(128 * 7 * 7,input_shape=(nnoise+nclass,)),
-			LeakyReLU(),
+			Activation("relu"),
 			InstanceNormalization(),
 			Reshape((7, 7, 128)),
 			UpSampling2D(),
 			Conv2D(128, kernel_size=3, padding="same"),
-			LeakyReLU(),
+			Activation("relu"),
 			InstanceNormalization(),
 			Conv2D(128, kernel_size=3, padding="same"),
-			LeakyReLU(),
+			Activation("relu"),
 			InstanceNormalization(),
 			UpSampling2D(),
 			Conv2D(64, kernel_size=3, padding="same"),
-			LeakyReLU(),
+			Activation("relu"),
 			InstanceNormalization(),
 			Conv2D(64, kernel_size=3, padding="same"),
-			LeakyReLU(),
+			Activation("relu"),
 			InstanceNormalization(),
-			Conv2D(1, kernel_size=3, padding="same",activation='sigmoid')])
+			Conv2D(1, kernel_size=3, padding="same"),
+			Activation("sigmoid")])
 
 if __name__ == '__main__':
 	
