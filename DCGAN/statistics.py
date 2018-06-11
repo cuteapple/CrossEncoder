@@ -4,15 +4,21 @@ import cv2
 from keras.datasets import mnist
 (x, y), (tx, ty) = mnist.load_data()
 
-f = lambda a: np.max(a,axis=0)
-name = 'max'
-
-z = np.zeros((10,28,28))
-
+xn = [np.zeros((28,28))]*10
 for n in range(10):
-	z[n] = f(x[y==n])
+	xn[n] = x[y==n]
+
+def S(f,name):
+	z = np.zeros((10,28,28))
+
+	for n in range(10):
+		z[n] = f(xn[n])
 	
-for n in range(10):
-	cv2.imwrite('{}.{}.png'.format(name,n),z[n])
+	for n in range(10):
+		cv2.imwrite('statistic/{}.{}.png'.format(name,n),z[n])
 
-cv2.imwrite('{}.all.png'.format(name),f(z))
+	cv2.imwrite('statistic/{}.all.png'.format(name),f(z))
+
+S(lambda a: np.max(a,axis=0),'max')
+S(lambda a: np.min(a,axis=0),'min')
+S(lambda a: np.mean(a,axis=0),'mean')
