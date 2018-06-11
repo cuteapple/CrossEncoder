@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 
 import D
+#(x,y) = next(D.data(40,0.6,1.0))
 (x,y) = next(D.data(200000,1.0,1.0))
 x*=255
 x = x.reshape(-1,28,28)
