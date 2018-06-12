@@ -74,4 +74,4 @@ if __name__ == '__main__':
 		
 	print('saving ...')
 	g.save(args.path)
-    d.save('d2.h5')
+	d.save('d2.h5')
