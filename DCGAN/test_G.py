@@ -15,8 +15,10 @@ try:
 except:
 	pass
 
-g = G.new_G((20,))
-g.load_weights(args.path)
+import keras
+from keras_contrib.layers.normalization import InstanceNormalization
+print('loading model ...')
+g = keras.models.load_model('G.h5')
 
 z,y = next(G.z(100,20))
 x = g.predict(z)
