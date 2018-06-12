@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrossEncoder", "CrossEncoder.pyproj", "{DD31BB4F-3B4C-45B1-ACE7-5B77954FF615}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrossGAN", "CrossGAN\CrossGAN.pyproj", "{52A2531A-B0A5-418A-90F1-D830ACDB82D9}"
-EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "DCGAN", "DCGAN\DCGAN.pyproj", "{94A5BBB7-9D61-4A3F-BC62-E50D8F4C4048}"
 EndProject
 Global
@@ -15,10 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DD31BB4F-3B4C-45B1-ACE7-5B77954FF615}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD31BB4F-3B4C-45B1-ACE7-5B77954FF615}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52A2531A-B0A5-418A-90F1-D830ACDB82D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52A2531A-B0A5-418A-90F1-D830ACDB82D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94A5BBB7-9D61-4A3F-BC62-E50D8F4C4048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{94A5BBB7-9D61-4A3F-BC62-E50D8F4C4048}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection

@@ -28,10 +28,10 @@ def D():
 			Activation('relu'),
 			Dropout(0.5),
 			Flatten(),
-			Dense(256),
+			Dense(128),
 			Activation('relu'),
 			Dropout(0.5),
-			Dense(256),
+			Dense(128),
 			Activation('relu'),
 			Dense(10)])
 
