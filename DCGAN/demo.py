@@ -25,15 +25,11 @@ outD = np.zeros(10)
 if not CONTROL_ONLY:
 	def init_models():
 		print('initializing ...')
-		import G
-		import D
-
+		import keras
+		from keras_contrib.layers.normalization import InstanceNormalization
 		print('loading model ...')
-		g = G.new_G(z.shape)
-		g.load_weights('G.h5')
-
-		d = D.D().model
-		d.load_weights('D.h5')
+		g = keras.models.load_model('G.h5')
+		d = keras.models.load_model('D.h5')
 
 		global predict
 		def predict():
