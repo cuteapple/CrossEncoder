@@ -2,8 +2,7 @@ import keras
 import numpy as np
 from keras.models import Sequential,Model
 from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
-from keras_contrib.layers.normalization import InstanceNormalization 
-from D import D
+from keras_contrib.layers.normalization import InstanceNormalization
 
 
 def new_G(input_shape):
@@ -54,14 +53,17 @@ if __name__ == '__main__':
 	z_len = 20
 	input_shape = (z_len,)
 	
-	print('loading G ...')
-	g = new_G(input_shape)
-	try: g.load_weights(args.path)
-	except: print('load weight for G failed')
+	print(f'loading G at {args.path} ...')
+	try:
+		g = keras.models.load_model(args.path)
+	except:
+		print('fail, creating new')
+		g = new_G(input_shape)
+	else:
+		print('success')
 	
-	print('loading D ...')
-	d = D.Load(args.discriminator_path)
-	d = d.model
+	print(f'loading D at {args.discriminator_path} ...')
+	d = keras.models.load_model(args.discriminator_path)
 	d.trainable = False
 
 	print('linking G & D ...')
@@ -70,9 +72,7 @@ if __name__ == '__main__':
 	m.compile(optimizer='adadelta',loss='mse',metrics=['accuracy'])
 
 	print('training ...')
-	m.fit_generator(z(args.batch_size,z_len),
-		steps_per_epoch = args.steps,
-		epochs=args.epochs)
+	m.fit_generator(z(args.batch_size,z_len), steps_per_epoch = args.steps, epochs=args.epochs)
 
 	print('saving ...')
-	g.save_weights(args.path)
+	g.save(args.path)
