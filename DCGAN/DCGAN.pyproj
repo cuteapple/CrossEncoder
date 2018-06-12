@@ -28,6 +28,7 @@
     </Compile>
     <Compile Include="G.py" />
     <Compile Include="sample_NoisyData.py" />
+    <Compile Include="statistics.py" />
     <Compile Include="test_G.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
