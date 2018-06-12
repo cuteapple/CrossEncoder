@@ -42,7 +42,7 @@ if __name__ == '__main__':
 	
 	import argparse
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-e","--epochs", default=1000, type=int)
+	parser.add_argument("-e","--epochs", default=200, type=int)
 	parser.add_argument("-s","--steps", default=64, type=int)
 	parser.add_argument("-b","--batch_size", default=128, type=int)
 	parser.add_argument("-p","--path", default="G.h5", type=str)

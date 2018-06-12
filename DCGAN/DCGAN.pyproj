@@ -19,15 +19,11 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="convert_model.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="D.py" />
     <Compile Include="demo.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="G.py" />
-    <Compile Include="sample_NoisyData.py" />
     <Compile Include="statistics.py" />
     <Compile Include="test_G.py" />
   </ItemGroup>
