@@ -48,15 +48,17 @@ class NoizyData:
 		target = y_train < 5
 		x_train = x_train[target]
 		y_train = y_train[target]
+		y_train = y_train
 
 		target = y_test < 5
 		x_test = x_test[target]
 		y_test = y_test[target]
+		y_test = y_test
 
 		x_train = NoizyData.transform(x_train)
 		x_test = NoizyData.transform(x_test)
-		y_train = keras.utils.to_categorical(y_train, 10)
-		y_test = keras.utils.to_categorical(y_test, 10)
+		y_train = keras.utils.to_categorical(y_train, 5)
+		y_test = keras.utils.to_categorical(y_test, 5)
 		return (x_train,y_train),(x_test,y_test)
 
 def new_D():
@@ -73,7 +75,7 @@ def new_D():
 			Dropout(0.5),
 			Dense(128, activation='relu'),
 			Dropout(0.5),
-			Dense(10)])
+			Dense(5)])
 	model.compile('adadelta', loss='mse', metrics=['accuracy'])
 	return model
 
