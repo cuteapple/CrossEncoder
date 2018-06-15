@@ -20,6 +20,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="D.py" />
+    <Compile Include="D04.py" />
+    <Compile Include="D59.py" />
     <Compile Include="demo.py">
       <SubType>Code</SubType>
     </Compile>
