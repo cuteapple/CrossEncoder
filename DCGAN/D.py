@@ -9,28 +9,27 @@ class NoizyData:
 
 		ax = noise_area[0]
 		ay = noise_area[1]
-		(x,y),(tx,ty) = self.load_mnist()
+		(self.x,self.y),(self.tx,self.ty) = self.load_mnist()
+		self.sy = y_scaler
 
+		def addnoise(x):
+			for i in range(len(x)):
+				noise = np.random.normal(noise_mean, noise_sigma, size=(ax,ay,1)) * noise_scaler
+				dx = np.random.randint(28 - 1 - ax)
+				dy = np.random.randint(28 - 1 - ay)
+				x[i, dx:dx + ax, dy:dy + ay] += noise
+				x = np.clip(x,0.0,1.0)
+
+		self.addnoise = addnoise
+
+	def train(self,nreal,nfake):
+		ch = np.random.randint(len(self.x),size = nreal + nfake)
+		x = self.x[ch]
+		y = self.y[ch]
 		
-		for i in range(len(x)):
-			noise = np.random.normal(noise_mean, noise_sigma, size=(ax,ay,1)) * noise_scaler
-			dx = np.random.randint(28 - 1 - ax)
-			dy = np.random.randint(28 - 1 - ay)
-			x[i, dx:dx + ax, dy:dy + ay] += noise
-					
-		noisy_x = np.clip(x,0.0,1.0)
-		noisy_y = y * y_scaler
-
-		self.x = np.concatenate((x,noisy_x), axis=0)
-		self.y = np.concatenate((y,noisy_y), axis=0)
-		self.tx = tx
-		self.ty = ty
-
-	def train(self):
-		return self.x,self.y
-
-	def test(self):
-		return self.tx,self.ty
+		self.addnoise(x[:nfake])
+		y[:nfake]*= self.sy
+		return x,y
 
 	@staticmethod
 	def transform(x):
@@ -89,8 +88,16 @@ if __name__ == "__main__":
 		print('success')
 	
 	print('training ...')
-	x,y = NoizyData(y_scaler=args.noise_y, noise_scaler=args.noise_sacler_x).train()
-	d.fit(x,y,epochs=args.epochs,batch_size=args.batch_size)
+	data = NoizyData(y_scaler=args.noise_y, noise_scaler=args.noise_sacler_x)
+
+	def gy():
+		nfake = args.batch_size // 3
+		nreal = args.batch_size - nfake
+		print(f'real = {nreal}, fake = {nfake}')
+		while True:
+			yield data.train(nreal,nfake)
+
+	d.fit_generator(gy(), steps_per_epoch= len(data.x) // args.batch_size, epochs=args.epochs)
 
 	print('saving ...')
 	d.save(args.path)
