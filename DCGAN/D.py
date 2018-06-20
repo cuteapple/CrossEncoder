@@ -50,7 +50,7 @@ class NoizyData:
 		y_test = keras.utils.to_categorical(y_test, 10)
 		return (x_train,y_train),(x_test,y_test)
 
-def new_D():
+def new_D_half():
 	from keras.models import Sequential
 	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
 	model = Sequential(name='mnist_classifier',
@@ -64,8 +64,7 @@ def new_D():
 			Dropout(0.5),
 			Dense(128, activation='relu'),
 			Dropout(0.5),
-			Dense(10)])
-	model.compile('adadelta', loss='mse', metrics=['accuracy'])
+			Dense(5)])
 	return model
 
 if __name__ == "__main__":
@@ -79,16 +78,20 @@ if __name__ == "__main__":
 	parser.add_argument("-nx","--noise_sacler_x", default=0.5, type=float)
 	args = parser.parse_args()
 
-	print(f'loading model at {args.path} ...')
-	try:
-		d = keras.models.load_model(args.path)
-	except:
-		print('fail, creating new')
-		d = new_D()
-	else:
-		print('success')
+	d0 = new_D_half()
+	d5 = new_D_half()
+	d0.name = 'd0'
+	d5.name = 'd5'
+
+	i = keras.models.Input((28,28,1))
+	o0 = d0(i)
+	o5 = d5(i)
+	o = keras.layers.merge.concatenate([o0,o5])
+	d = keras.models.Model(i,o)
+	d.compile('adadelta', loss='mse', metrics=['mae'])
 	
-	print('training ...')
+
+	print('training d ...')
 	x,y = NoizyData(y_scaler=args.noise_y, noise_scaler=args.noise_sacler_x).train()
 	d.fit(x,y,epochs=args.epochs,batch_size=args.batch_size)
 
