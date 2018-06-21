@@ -75,7 +75,7 @@ if __name__ == "__main__":
 	parser.add_argument("-b","--batch_size", default=128, type=int)
 	parser.add_argument("-p","--path", default="D.h5", type=str)
 	parser.add_argument("-ny","--noise_y", default=0.3, type=float)
-	parser.add_argument("-nx","--noise_sacler_x", default=0.5, type=float)
+	parser.add_argument("-nx","--noise_scaler_x", default=0.5, type=float)
 	args = parser.parse_args()
 
 	print(f'loading model at {args.path} ...')
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 		print('success')
 	
 	print('training ...')
-	data = NoizyData(y_scaler=args.noise_y, noise_scaler=args.noise_sacler_x)
+	data = NoizyData(y_scaler=args.noise_y, noise_scaler=args.noise_scaler_x)
 
 	def gy():
 		nfake = args.batch_size // 3
