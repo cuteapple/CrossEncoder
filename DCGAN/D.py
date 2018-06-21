@@ -7,8 +7,7 @@ class NoizyData:
 	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(7,7), y_scaler=0.3):
 		noise_mean = 0.0
 
-		ax = noise_area[0]
-		ay = noise_area[1]
+		ax,ay = noise_area
 		(self.x,self.y),(self.tx,self.ty) = self.load_mnist()
 		self.sy = y_scaler
 
@@ -87,7 +86,10 @@ if __name__ == "__main__":
 	parser.add_argument("-p","--path", default="D.h5", type=str)
 	parser.add_argument("-ny","--noise_y", default=0.3, type=float)
 	parser.add_argument("-nx","--noise_scaler_x", default=0.5, type=float)
+	parser.add_argument("-na","--noise_area", default=(7,7), nargs=2, type=int)
 	args = parser.parse_args()
+	print(f'args : {args}')
+
 
 	print(f'loading model at {args.path} ...')
 	try:
