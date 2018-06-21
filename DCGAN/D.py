@@ -18,7 +18,7 @@ class NoizyData:
 				dx = np.random.randint(28 - 1 - ax)
 				dy = np.random.randint(28 - 1 - ay)
 				x[i, dx:dx + ax, dy:dy + ay] += noise
-				x = np.clip(x,0.0,1.0)
+				x[:] = np.clip(x,0.0,1.0)
 
 		self.addnoise = addnoise
 
@@ -29,7 +29,10 @@ class NoizyData:
 		
 		self.addnoise(x[:nfake])
 		y[:nfake]*= self.sy
-		return x,y
+
+		sindex = np.arange(len(ch))
+		np.random.shuffle(sindex)
+		return x[sindex],y[sindex]
 
 	@staticmethod
 	def transform(x):
@@ -48,6 +51,14 @@ class NoizyData:
 		y_train = keras.utils.to_categorical(y_train, 10)
 		y_test = keras.utils.to_categorical(y_test, 10)
 		return (x_train,y_train),(x_test,y_test)
+
+if False and 'test_data':
+	import cv2
+	data = NoizyData()
+	x,y = data.train(10,10)
+	for i,im in enumerate(x):
+		cv2.imwrite(f'{i}.png',im.reshape((28,28,1))*255)
+	raise SystemExit(0)
 
 def new_D():
 	from keras.models import Sequential
