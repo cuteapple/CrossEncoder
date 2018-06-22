@@ -7,8 +7,7 @@ class NoizyData:
 	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(7,7), y_scaler=0.3):
 		noise_mean = 0.0
 
-		ax = noise_area[0]
-		ay = noise_area[1]
+		ax,ay = noise_area
 		(x,y),(tx,ty) = self.load_mnist()
 
 		
@@ -77,6 +76,7 @@ if __name__ == "__main__":
 	parser.add_argument("-p","--path", default="D.h5", type=str)
 	parser.add_argument("-ny","--noise_y", default=0.3, type=float)
 	parser.add_argument("-nx","--noise_sacler_x", default=0.5, type=float)
+	parser.add_argument("-na","--noise_area", default=(7,7), nargs=2, type=int)
 	args = parser.parse_args()
 
 	print(f'loading model at {args.path} ...')
@@ -89,7 +89,7 @@ if __name__ == "__main__":
 		print('success')
 	
 	print('training ...')
-	x,y = NoizyData(y_scaler=args.noise_y, noise_scaler=args.noise_sacler_x).train()
+	x,y = NoizyData(y_scaler=args.noise_y, noise_scaler=args.noise_sacler_x, noise_area=args.noise_area).train()
 	d.fit(x,y,epochs=args.epochs,batch_size=args.batch_size)
 
 	print('saving ...')
