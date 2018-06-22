@@ -4,24 +4,16 @@ import numpy as np
 
 class NoizyData:
 	'''noizy mnist data'''
-	def __init__(self, noise_sigma=1.0, noise_scaler=0.5,noise_area=(7,7), y_scaler=0.3):
+	def __init__(self, noise_sigma=1.0, noise_scaler=0.5, y_scaler=0.3):
 		noise_mean = 0.0
 
-		ax,ay = noise_area
 		(x,y),(tx,ty) = self.load_mnist()
 
-		nx = np.copy(x)
-		for i in range(len(nx)):
-			noise = np.random.normal(noise_mean, noise_sigma, size=(ax,ay,1)) * noise_scaler
-			dx = np.random.randint(28 - 1 - ax)
-			dy = np.random.randint(28 - 1 - ay)
-			nx[i, dx:dx + ax, dy:dy + ay] += noise
-					
-		noisy_x = np.clip(nx,0.0,1.0)
-		noisy_y = y * y_scaler
+		nx = x + noise_scaler * np.random.normal(noise_mean, noise_sigma, size=x.shape)
+		ny = y * y_scaler
 
-		self.x = np.concatenate((x,noisy_x), axis=0)
-		self.y = np.concatenate((y,noisy_y), axis=0)
+		self.x = np.concatenate((x,nx), axis=0)
+		self.y = np.concatenate((y,ny), axis=0)
 		self.tx = tx
 		self.ty = ty
 
@@ -76,7 +68,6 @@ if __name__ == "__main__":
 	parser.add_argument("-p","--path", default="D.h5", type=str)
 	parser.add_argument("-ny","--noise_y", default=0.3, type=float)
 	parser.add_argument("-nx","--noise_sacler_x", default=0.5, type=float)
-	parser.add_argument("-na","--noise_area", default=(7,7), nargs=2, type=int)
 	args = parser.parse_args()
 
 	print(f'loading model at {args.path} ...')
@@ -89,7 +80,7 @@ if __name__ == "__main__":
 		print('success')
 	
 	print('training ...')
-	x,y = NoizyData(y_scaler=args.noise_y, noise_scaler=args.noise_sacler_x, noise_area=args.noise_area).train()
+	x,y = NoizyData(y_scaler=args.noise_y, noise_scaler=args.noise_sacler_x).train()
 	d.fit(x,y,epochs=args.epochs,batch_size=args.batch_size)
 
 	print('saving ...')
