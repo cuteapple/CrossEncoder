@@ -1,7 +1,7 @@
 from D import NoizyData
 import numpy as np
 
-x,_ = NoizyData(0.5,0.5,0.3).train()
+x,_ = NoizyData(0.5,2.0,0.3).train()
 
 from keras.datasets import mnist
 (_, y), _ = mnist.load_data()
