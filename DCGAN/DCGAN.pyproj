@@ -24,6 +24,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="G.py" />
+    <Compile Include="statistics_noisydata.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="statistics.py" />
     <Compile Include="test_G.py" />
   </ItemGroup>
