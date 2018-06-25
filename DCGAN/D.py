@@ -45,10 +45,13 @@ def new_D():
 	from keras.models import Sequential
 	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
 	model = Sequential(name='mnist_classifier',
-		layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=(28,28,1)),
+		layers=[Conv2D(256, kernel_size=3, strides=1, activation='relu',input_shape=(28,28,1)),
+			Conv2D(128, kernel_size=3, strides=2, activation='relu'),
+			Dropout(0.5),
+			Conv2D(128, kernel_size=5, strides=1, activation='relu'),
 			Conv2D(64, kernel_size=3, strides=2, activation='relu'),
 			Dropout(0.5),
-			Conv2D(64, kernel_size=3, strides=2, activation='relu'),
+			Conv2D(64, kernel_size=3, strides=1, activation='relu'),
 			Dropout(0.5),
 			Flatten(),
 			Dense(128, activation='relu'),
@@ -56,7 +59,7 @@ def new_D():
 			Dense(128, activation='relu'),
 			Dropout(0.5),
 			Dense(10)])
-	model.compile('adadelta', loss='mse', metrics=['accuracy'])
+	model.compile('adadelta', loss='mse', metrics=['mae'])
 	return model
 
 if __name__ == "__main__":
@@ -66,7 +69,7 @@ if __name__ == "__main__":
 	parser.add_argument("-e","--epochs", default=200, type=int)
 	parser.add_argument("-b","--batch_size", default=128, type=int)
 	parser.add_argument("-p","--path", default="D.h5", type=str)
-	parser.add_argument("-ny","--noise_y", default=0.3, type=float)
+	parser.add_argument("-ny","--noise_y", default=0.7, type=float)
 	parser.add_argument("-nx","--noise_sacler_x", default=0.5, type=float)
 	args = parser.parse_args()
 
