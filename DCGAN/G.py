@@ -7,36 +7,24 @@ from keras_contrib.layers.normalization import InstanceNormalization
 
 def new_G(input_shape):
 	return Sequential(name='G',
-		layers=[Dense(256 * 7 * 7, activation="relu", input_shape=input_shape),
-			Reshape((7, 7, 256)),
+		layers=[Dense(128 * 7 * 7, activation="relu", input_shape=input_shape),
+			Reshape((7, 7, 128)),
 			InstanceNormalization(),
-			Conv2D(256, kernel_size=3, padding="same"),
-			Activation("relu"),
-			InstanceNormalization(),
-
 			UpSampling2D(),
-			Conv2D(128, kernel_size=5, padding="same"),
+			Conv2D(128, kernel_size=3, padding="same"),
 			Activation("relu"),
 			InstanceNormalization(),
-			Conv2D(128, kernel_size=5, padding="same"),
+			Conv2D(128, kernel_size=3, padding="same"),
 			Activation("relu"),
 			InstanceNormalization(),
-			Conv2D(128, kernel_size=5, padding="same"),
-			Activation("relu"),
-			InstanceNormalization(),
-
 			UpSampling2D(),
-			Conv2D(64, kernel_size=7, padding="same"),
+			Conv2D(64, kernel_size=3, padding="same"),
 			Activation("relu"),
 			InstanceNormalization(),
-			Conv2D(64, kernel_size=7, padding="same"),
+			Conv2D(64, kernel_size=3, padding="same"),
 			Activation("relu"),
 			InstanceNormalization(),
-
-			Conv2D(32, kernel_size=7, padding="same"),
-			Activation("relu"),
-			InstanceNormalization(),
-			Conv2D(1, kernel_size=7, padding="same"),
+			Conv2D(1, kernel_size=3, padding="same"),
 			Activation("sigmoid")])
 
 
