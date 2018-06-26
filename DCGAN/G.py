@@ -15,28 +15,28 @@ def new_G(input_shape):
 			InstanceNormalization(),
 
 			UpSampling2D(),
-			Conv2D(128, kernel_size=5, padding="same"),
+			Conv2D(128, kernel_size=3, padding="same"),
 			Activation("relu"),
 			InstanceNormalization(),
-			Conv2D(128, kernel_size=5, padding="same"),
+			Conv2D(128, kernel_size=3, padding="same"),
 			Activation("relu"),
 			InstanceNormalization(),
-			Conv2D(128, kernel_size=5, padding="same"),
+			Conv2D(128, kernel_size=3, padding="same"),
 			Activation("relu"),
 			InstanceNormalization(),
 
 			UpSampling2D(),
-			Conv2D(64, kernel_size=7, padding="same"),
+			Conv2D(64, kernel_size=3, padding="same"),
 			Activation("relu"),
 			InstanceNormalization(),
-			Conv2D(64, kernel_size=7, padding="same"),
+			Conv2D(64, kernel_size=3, padding="same"),
 			Activation("relu"),
 			InstanceNormalization(),
 
-			Conv2D(32, kernel_size=7, padding="same"),
+			Conv2D(32, kernel_size=3, padding="same"),
 			Activation("relu"),
 			InstanceNormalization(),
-			Conv2D(1, kernel_size=7, padding="same"),
+			Conv2D(1, kernel_size=3, padding="same"),
 			Activation("sigmoid")])
 
 
