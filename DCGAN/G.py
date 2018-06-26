@@ -1,44 +1,45 @@
 import keras
 import numpy as np
 from keras.models import Sequential,Model
-from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input
+from keras.layers import Dense,Reshape,UpSampling2D,Conv2D,Activation,Input,Add
 from keras_contrib.layers.normalization import InstanceNormalization
 
 
 def new_G(input_shape):
-	return Sequential(name='G',
-		layers=[Dense(256 * 7 * 7, activation="relu", input_shape=input_shape),
-			Reshape((7, 7, 256)),
-			InstanceNormalization(),
-			Conv2D(256, kernel_size=3, padding="same"),
-			Activation("relu"),
-			InstanceNormalization(),
+	i = Input(input_shape)
+	x = Dense(256 * 7 * 7, activation="relu", input_shape=input_shape)(i)
+	x = Reshape((7, 7, 256))(x)
+	x = InstanceNormalization()(x)
+	x = Conv2D(256, kernel_size=3, padding="same", activation='relu')(x)
+	x = InstanceNormalization()(x)
+	
+	x = UpSampling2D()(x)
+	
+	x1 = Conv2D(256, kernel_size=3, padding="same", activation='relu')(x)
+	x = Add()([x,x1])
+	x = Conv2D(128, kernel_size=3, padding="same", activation='relu')(x)
+	x = InstanceNormalization()(x)
+	
+	x = UpSampling2D()(x)
 
-			UpSampling2D(),
-			Conv2D(128, kernel_size=3, padding="same"),
-			Activation("relu"),
-			InstanceNormalization(),
-			Conv2D(128, kernel_size=3, padding="same"),
-			Activation("relu"),
-			InstanceNormalization(),
-			Conv2D(128, kernel_size=3, padding="same"),
-			Activation("relu"),
-			InstanceNormalization(),
+	x1 = Conv2D(128, kernel_size=3, padding="same", activation='relu')(x)
+	x = Add()([x,x1])
+	x = Conv2D(64, kernel_size=3, padding="same", activation='relu')(x)
+	x = InstanceNormalization()(x)
+	
+	x1 = Conv2D(64, kernel_size=3, padding="same", activation='relu')(x)
+	x = Add()([x,x1])
+	x = Conv2D(32, kernel_size=3, padding="same", activation='relu')(x)
+	x = InstanceNormalization()(x)
 
-			UpSampling2D(),
-			Conv2D(64, kernel_size=3, padding="same"),
-			Activation("relu"),
-			InstanceNormalization(),
-			Conv2D(64, kernel_size=3, padding="same"),
-			Activation("relu"),
-			InstanceNormalization(),
+	x = Conv2D(1, kernel_size=3, padding="same")(x)
+	x = Activation('sigmoid')(x)
 
-			Conv2D(32, kernel_size=3, padding="same"),
-			Activation("relu"),
-			InstanceNormalization(),
-			Conv2D(1, kernel_size=3, padding="same"),
-			Activation("sigmoid")])
+	return Model(i,x,'G')
 
+
+#from keras.utils import plot_model
+#plot_model(new_G((20,)), show_shapes=True, to_file='G.png')
 
 def z(batch_size,length):
 	def g():
