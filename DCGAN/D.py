@@ -62,7 +62,16 @@ def new_D():
 	model.compile('adadelta', loss='mse', metrics=['mae'])
 	return model
 
+
+
 if __name__ == "__main__":
+
+	d = new_D()
+
+	from keras.utils import plot_model
+	plot_model(d, show_shapes=True, to_file='D.png')
+	raise SystemExit(0)
+
 
 	import argparse
 	parser = argparse.ArgumentParser()

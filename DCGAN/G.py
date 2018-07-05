@@ -37,12 +37,6 @@ def new_G(input_shape):
 
 	return Model(i,x,'G')
 
-
-#from keras.utils import plot_model
-#plot_model(new_G((20,)), show_shapes=True, to_file='G.png')
-#raise SystemExit(0)
-
-
 def z(batch_size,length):
 	def g():
 		answer = np.eye(10)[np.random.choice(10,batch_size)]
@@ -53,7 +47,12 @@ def z(batch_size,length):
 		yield g()
 
 if __name__ == '__main__':
-	
+
+	from keras.utils import plot_model
+	plot_model(new_G((20,)), show_shapes=True, to_file='G.png')
+	raise SystemExit(0)
+
+
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-e","--epochs", default=200, type=int)
