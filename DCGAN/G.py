@@ -38,8 +38,10 @@ def new_G(input_shape):
 	return Model(i,x,'G')
 
 
-#from keras.utils import plot_model
-#plot_model(new_G((20,)), show_shapes=True, to_file='G.png')
+from keras.utils import plot_model
+plot_model(new_G((20,)), show_shapes=True, to_file='G.png')
+raise SystemExit(0)
+
 
 def z(batch_size,length):
 	def g():
