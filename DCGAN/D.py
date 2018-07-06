@@ -9,8 +9,11 @@ class NoizyData:
 
 		(x,y),(tx,ty) = self.load_mnist()
 
-		nx = x + noise_scaler * np.random.normal(noise_mean, noise_sigma, size=x.shape)
-		ny = y * y_scaler
+		#nx = x + noise_scaler * np.random.normal(noise_mean, noise_sigma, size=x.shape)
+		#ny = y * y_scaler
+
+		nx = x
+		ny = y
 
 		self.x = np.concatenate((x,nx), axis=0)
 		self.y = np.concatenate((y,ny), axis=0)
