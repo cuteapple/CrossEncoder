@@ -44,8 +44,8 @@ class NoizyData:
 def new_D():
 	from keras.models import Sequential
 	from keras.layers import Conv2D,Flatten,Dense,Dropout,Input
-	model = Sequential(name='mnist_classifier',
-		layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=(28,28,1)),
+	model = Sequential(name='D',
+		layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=(32,32,3)),
 			Conv2D(64, kernel_size=3, strides=2, activation='relu'),
 			Dropout(0.5),
 			Conv2D(64, kernel_size=3, strides=2, activation='relu'),
