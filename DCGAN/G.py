@@ -7,8 +7,8 @@ from keras_contrib.layers.normalization import InstanceNormalization
 
 def new_G(input_shape):
 	return Sequential(name='G',
-		layers=[Dense(128 * 7 * 7, activation="relu", input_shape=input_shape),
-			Reshape((7, 7, 128)),
+		layers=[Dense(128 * 4 * 4, activation="relu", input_shape=input_shape),
+			Reshape((4, 4, 128)),
 			InstanceNormalization(),
 			UpSampling2D(),
 			Conv2D(128, kernel_size=3, padding="same"),
@@ -24,7 +24,14 @@ def new_G(input_shape):
 			Conv2D(64, kernel_size=3, padding="same"),
 			Activation("relu"),
 			InstanceNormalization(),
-			Conv2D(1, kernel_size=3, padding="same"),
+			UpSampling2D(),
+			Conv2D(32, kernel_size=3, padding="same"),
+			Activation("relu"),
+			InstanceNormalization(),
+			Conv2D(32, kernel_size=3, padding="same"),
+			Activation("relu"),
+			InstanceNormalization(),
+			Conv2D(3, kernel_size=3, padding="same"),
 			Activation("sigmoid")])
 
 
@@ -49,7 +56,7 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 	print(args)
 
-	output_shape = (28,28,1)
+	output_shape = (32,32,3)
 	z_len = 20
 	input_shape = (z_len,)
 	

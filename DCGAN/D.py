@@ -7,7 +7,7 @@ class NoizyData:
 	def __init__(self, noise_sigma=1.0, noise_scaler=0.5, y_scaler=0.3):
 		noise_mean = 0.0
 
-		(x,y),(tx,ty) = self.load_mnist()
+		(x,y),(tx,ty) = self.load_datas()
 
 		nx = x + noise_scaler * np.random.normal(noise_mean, noise_sigma, size=x.shape)
 		ny = y * y_scaler
@@ -25,16 +25,16 @@ class NoizyData:
 
 	@staticmethod
 	def transform(x):
-		return x.astype('float32').reshape(-1,28,28,1) / 255
+		return x.astype('float32').reshape(-1,32,32,3) / 255
 	
 	@staticmethod
 	def transform_inv(x):
 		return x * 255
 
 	@staticmethod
-	def load_mnist():
-		from keras.datasets import mnist
-		(x_train, y_train), (x_test, y_test) = mnist.load_data()
+	def load_datas():
+		from keras.datasets import cifar10
+		(x_train, y_train), (x_test, y_test) = cifar10.load_data()
 		x_train = NoizyData.transform(x_train)
 		x_test = NoizyData.transform(x_test)
 		y_train = keras.utils.to_categorical(y_train, 10)
@@ -51,7 +51,7 @@ def new_D():
 			Conv2D(64, kernel_size=3, strides=2, activation='relu'),
 			Dropout(0.5),
 			Flatten(),
-			Dense(128, activation='relu'),
+			Dense(256, activation='relu'),
 			Dropout(0.5),
 			Dense(128, activation='relu'),
 			Dropout(0.5),
