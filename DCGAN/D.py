@@ -35,6 +35,8 @@ class NoizyData:
 	def load_datas():
 		from keras.datasets import cifar10
 		(x_train, y_train), (x_test, y_test) = cifar10.load_data()
+		x_train = x_train[:1000]
+		y_train = y_train[:1000]
 		x_train = NoizyData.transform(x_train)
 		x_test = NoizyData.transform(x_test)
 		y_train = keras.utils.to_categorical(y_train, 10)
