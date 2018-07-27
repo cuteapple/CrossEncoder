@@ -47,14 +47,12 @@ def new_D():
 	model = Sequential(name='D',
 		layers=[Conv2D(32, kernel_size=3, strides=1, activation='relu',input_shape=(32,32,3)),
 			Conv2D(64, kernel_size=3, strides=2, activation='relu'),
-			Dropout(0.5),
-			Conv2D(64, kernel_size=3, strides=2, activation='relu'),
-			Dropout(0.5),
+			Conv2D(96, kernel_size=3, strides=1, activation='relu'),
+			Conv2D(128, kernel_size=3, strides=2, activation='relu'),
+			Conv2D(192, kernel_size=3, strides=1, activation='relu'),
 			Flatten(),
-			Dense(256, activation='relu'),
-			Dropout(0.5),
-			Dense(128, activation='relu'),
-			Dropout(0.5),
+			Dense(512, activation='relu'),
+			Dense(512, activation='relu'),
 			Dense(10)])
 	model.compile('adadelta', loss='mse', metrics=['accuracy'])
 	return model
