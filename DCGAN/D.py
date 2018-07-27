@@ -54,7 +54,7 @@ def new_D():
 			Dense(512, activation='relu'),
 			Dense(512, activation='relu'),
 			Dense(10)])
-	model.compile('adadelta', loss='mse', metrics=['accuracy'])
+	model.compile('adadelta', loss='mse', metrics=['accuracy','mae'])
 	return model
 
 if __name__ == "__main__":

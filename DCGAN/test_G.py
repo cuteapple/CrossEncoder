@@ -33,11 +33,11 @@ for i,(p,y) in enumerate(zip(x,y)):
 	cv2.imwrite('{}/{}-{}.png'.format(o,y,i),p)
 
 margin = 1
-canvas = np.ones((32*2+3,32*5+6),np.uint8)*128
+canvas = np.ones((32*2+3,32*5+6,3),np.uint8)*128
 for i,im in enumerate(sample):
 	nx = i//5
 	ny = i%5
 	x = nx*33+1
 	y = ny*33+1
-	canvas[x:x+32,y:y+32]=im
+	canvas[x:x+32,y:y+32,:]=im
 	cv2.imwrite('{}/sample.png'.format(o),canvas)
